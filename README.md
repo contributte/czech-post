@@ -1,6 +1,6 @@
-# Czech Post
+# Czech Post - Dopis online
 
-[Czech Post](https://www.ceskaposta.cz/en/index) API client
+[Czech Post - Dopis online](https://online.postservis.cz/) API client
 
 -----
 

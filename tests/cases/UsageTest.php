@@ -3,16 +3,19 @@
 namespace Tests\Cases\Contributte\CzechPost;
 
 use Contributte\CzechPost\Client\ConsignmentClient;
+use Contributte\CzechPost\Entity\Dispatch;
+use Contributte\CzechPost\Exception\Runtime\ResponseException;
 use Contributte\CzechPost\Http\GuzzleClient;
 use Contributte\CzechPost\Requestor\ConsignmentRequestor;
-use Contributte\CzechPost\Utils\Helpers;
-use DateTime;
+use DateTimeImmutable;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use Tests\Cases\Contributte\CzechPost\XmlRequest\ConsignmentRequestFactoryTest;
 
 final class UsageTest extends TestCase
 {
+
+	private const TMP_DIR = __DIR__ . '/../../tmp/';
 
 	/** @var ConsignmentRequestor */
 	private $cpost;
@@ -27,89 +30,92 @@ final class UsageTest extends TestCase
 				'auth' => ['dreplech', 'dreplech'],
 			],
 			'config' => [
-				'tmp_dir' => __DIR__ . '/../../../tmp/',
+				'tmp_dir' => self::TMP_DIR,
 			],
 		];
 
-		$guzzle = new GuzzleClient(new Client($config));
+		$guzzle = new GuzzleClient(new Client($config['http']));
 		$client = new ConsignmentClient($guzzle, $config);
 		$this->cpost = new ConsignmentRequestor($client);
 	}
 
-	public function testSendConsignment(): string
+	public function testSendConsignment(): Dispatch
 	{
-		$res = $this->cpost->sendConsignment(ConsignmentRequestFactoryTest::createConsignmentWithoutCheque());
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
+		$dispatch = $this->cpost->sendConsignment(ConsignmentRequestFactoryTest::createConsignmentWithoutCheque());
 
-		$this->assertConsignmentAccepted($xml);
+		$this->assertConsignmentDispatch($dispatch);
+		$this->assertEquals(20, strlen($dispatch->getId()));
+		$this->assertFalse($dispatch->isPrintCheque());
 
-		return $xml['kod_objednavky'];
+		return $dispatch;
 	}
 
 	public function testSendConsignmentWithCheque(): void
 	{
-		$res = $this->cpost->sendConsignment(ConsignmentRequestFactoryTest::createConsignmentWithCheque());
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
+		$dispatch = $this->cpost->sendConsignment(ConsignmentRequestFactoryTest::createConsignmentWithCheque());
 
-		$this->assertConsignmentAccepted($xml);
+		$this->assertConsignmentDispatch($dispatch);
+		$this->assertEquals(20, strlen($dispatch->getId()));
+		$this->assertTrue($dispatch->isPrintCheque());
 	}
 
 	/**
 	 * @depends testSendConsignment
 	 */
-	public function testGetConsignmentsOverview(string $consignmentCode): void
+	public function testGetConsignmentsOverview(Dispatch $dispatch): void
 	{
-		$res = $this->cpost->getConsignmentsOverview($consignmentCode);
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
+		$overview = $this->cpost->getConsignmentOverview($dispatch->getId());
+		$this->assertConsignmentDispatch($overview);
+	}
 
-		$this->assertEquals($consignmentCode, $xml['zakazka']['@attributes']['id']);
-		$this->assertNotNull($xml['zakazka']['podacicislo']);
-		$this->assertEquals(1, $xml['zakazka']['pocetstranek']);
-		$this->assertGreaterThanOrEqual(28, (float) $xml['zakazka']['cena']);
-		$this->assertEquals((new DateTime())->format('Y-m-d'), explode(' ', $xml['zakazka']['datumpodani'], 2)[0]);
+	/**
+	 * @depends testSendConsignment
+	 */
+	public function testGetConsignmentLabel(Dispatch $dispatch): void
+	{
+		$labelData = $this->cpost->getConsignmentLabel($dispatch->getTrackingNumber());
+
+		$fileName = sprintf('%s/%s.pdf', self::TMP_DIR, $dispatch->getTrackingNumber());
+		file_put_contents($fileName, $labelData);
+
+		$this->assertGreaterThan(100000, filesize($fileName));
 	}
 
 	public function testGetConsignmentsOverviewInvalidId(): void
 	{
-		$res = $this->cpost->getConsignmentsOverview('some-invalid-id');
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
-
-		$this->assertEquals(-9, $xml['kod']);
-		$this->assertEquals('Zakázka č. some-invalid-id neexistuje.', $xml['popis']);
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage('Error: Zakázka č. some-invalid-id neexistuje., Code: -9');
+		$this->cpost->getConsignmentOverview('some-invalid-id');
 	}
 
 	public function testGetConsignmentByDate(): void
 	{
-		$today = new DateTime();
-		$res = $this->cpost->getConsignmentsByDate($today);
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
+		$today = new DateTimeImmutable();
+		$dispatches = $this->cpost->getConsignmentsByDate($today);
 
-		$this->assertArrayHasKey('zakazka', $xml);
-		$this->assertGreaterThanOrEqual(1, count($xml['zakazka']));
+		// in previous test we created 1
+		$this->assertGreaterThanOrEqual(1, count($dispatches));
+		foreach ($dispatches as $d) {
+			$this->assertConsignmentDispatch($d);
+		}
 	}
 
 	public function testGetConsignmentByDateNoRecords(): void
 	{
-		$longTimeAgo = (new DateTime())->setDate(1975, 12, 24);
-		$res = $this->cpost->getConsignmentsByDate($longTimeAgo);
-		$xml = Helpers::xmlToArray($res->getBody()->getContents());
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage('Error: K datu 19751224 neexistuje žádný záznam., Code: -10');
 
-		$this->assertArrayHasKey('kod', $xml);
-		$this->assertEquals('-10', $xml['kod']);
-		$this->assertArrayHasKey('popis', $xml);
-		$this->assertContains('neexistuje žádný záznam', $xml['popis']);
+		$longTimeAgo = (new DateTimeImmutable())->setDate(1975, 12, 24);
+		$this->cpost->getConsignmentsByDate($longTimeAgo);
 	}
 
-	/**
-	 * @param mixed[] $xml
-	 */
-	private function assertConsignmentAccepted(array $xml): void
+	private function assertConsignmentDispatch(Dispatch $confirm): void
 	{
-		$this->assertArrayHasKey('chyby', $xml);
-		$this->assertEquals(0, $xml['chyby']['@attributes']['stav']);
-
-		$this->assertArrayHasKey('kod_objednavky', $xml);
-		$this->assertEquals(20, strlen($xml['kod_objednavky']));
+		$this->assertTrue(
+			$confirm->getTrackingNumber() === 'neni' ||
+			substr($confirm->getTrackingNumber(), 0, 2) === 'RR'
+		);
+		$this->assertEquals((new DateTimeImmutable())->format('Y-m-d'), $confirm->getDate()->format('Y-m-d'));
 	}
 
 }

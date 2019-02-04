@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Contributte\CzechPost\XmlRequest\Consignment;
+namespace Contributte\CzechPost\Entity;
 
-use Contributte\CzechPost\XmlRequest\Consignment\Enum\Envelope;
-use Contributte\CzechPost\XmlRequest\Consignment\Enum\PrintType;
+use Contributte\CzechPost\Enum\Envelope;
+use Contributte\CzechPost\Enum\PrintType;
 
 final class Consignment
 {

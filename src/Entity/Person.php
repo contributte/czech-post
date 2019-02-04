@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Contributte\CzechPost\XmlRequest\Consignment;
+namespace Contributte\CzechPost\Entity;
 
 final class Person
 {
