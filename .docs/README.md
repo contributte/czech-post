@@ -10,17 +10,26 @@ extensions:
 
 contributte.czechpost:
     http:
-        base_uri: http://cpost.api/
+        base_uri: https://online3.postservis.cz/dopisonline/
         auth: [dreplech, dreplech]
     config:
         tmp_dir: '../../some/tmp/dir/path/'
 ```
+
+Note: dreplech/dreplech are CzechPost testing credentials. 
 
 ## Usage
 
 ```
 CpostRootquestor -> *Requestor(s) -> endpoint method
 ```
+
+For better usage explanation please see `tests/Cases/UsageTest.php`
+
+In order to create the consignment you must instantiate `Consignment` entity.
+By passing this entity object to `sendConsignment` method you should get `Dispatch` entity as the response.
+Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods, 
+which should be used for calling `getConsignmentsOverview` and `getConsignmentLabel` methods.
 
 ### Rootquestor
 
@@ -49,12 +58,14 @@ public $consignmentRequestor;
 
 **ConsignmentRequestor**
 
-| Method                                                            | API path              | Type |
-| ------------------------------------------------------------------| ----------------------|----- |
-| sendConsignment(Consignment $consignment): ResponseInterface      | .../donApi.php        | GET  |
-| getConsignmentsOverview(string $consignmentId): ResponseInterface | .../donPrehledZak.php | GET  |
-| getConsignmentsByDate(DateTime $date): ResponseInterface          | .../donPrehledZak.php | GET  |
+| Method                                                | API path              | Type |
+| ------------------------------------------------------| ----------------------|----- |
+| sendConsignment(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
+| getConsignmentsOverview(string $id): Dispatch         | .../donPrehledZak.php | POST |
+| getConsignmentsByDate(DateTime $date): []Dispatch     | .../donPrehledZak.php | POST |
+| getConsignmentLabel(string $trackingNumber): string   | .../podlist.php       | POST |
 
+_Note: the string returned by `getConsignmentLabel` method is the content of pdf file._
 
 ### Client
 

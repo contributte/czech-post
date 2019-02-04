@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Contributte\CzechPost\XmlRequest\Consignment\Enum;
+namespace Contributte\CzechPost\Enum;
 
 final class PrintType
 {

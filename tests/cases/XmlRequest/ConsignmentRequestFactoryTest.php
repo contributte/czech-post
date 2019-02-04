@@ -2,10 +2,10 @@
 
 namespace Tests\Cases\Contributte\CzechPost\XmlRequest;
 
-use Contributte\CzechPost\XmlRequest\Consignment\Cheque;
-use Contributte\CzechPost\XmlRequest\Consignment\Consignment;
-use Contributte\CzechPost\XmlRequest\Consignment\File;
-use Contributte\CzechPost\XmlRequest\Consignment\Person;
+use Contributte\CzechPost\Entity\Cheque;
+use Contributte\CzechPost\Entity\Consignment;
+use Contributte\CzechPost\Entity\File;
+use Contributte\CzechPost\Entity\Person;
 use Contributte\CzechPost\XmlRequest\ConsignmentRequestFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -80,7 +80,7 @@ final class ConsignmentRequestFactoryTest extends TestCase
 		$consignment = self::createConsignmentWithoutCheque();
 
 		$request = $this->factory->create($consignment);
-		$this->assertFileContent(__DIR__ . '/examples/without_cheque.xml', $request);
+		$this->assertFileContent(__DIR__ . '/examples/without_cheque.xml', $request->saveXML());
 	}
 
 	public function testCreateWithCheque(): void
@@ -88,7 +88,7 @@ final class ConsignmentRequestFactoryTest extends TestCase
 		$consignment = self::createConsignmentWithCheque();
 
 		$request = $this->factory->create($consignment);
-		$this->assertFileContent(__DIR__ . '/examples/with_cheque.xml', $request);
+		$this->assertFileContent(__DIR__ . '/examples/with_cheque.xml', $request->saveXML());
 	}
 
 	private function assertFileContent(string $file, string $generated): void

@@ -2,9 +2,9 @@
 
 namespace Contributte\CzechPost\XmlRequest;
 
-use Contributte\CzechPost\XmlRequest\Consignment\Consignment;
-use Contributte\CzechPost\XmlRequest\Consignment\Enum\PrintType;
-use Contributte\CzechPost\XmlRequest\Consignment\File;
+use Contributte\CzechPost\Entity\Consignment;
+use Contributte\CzechPost\Entity\File;
+use Contributte\CzechPost\Enum\PrintType;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -18,7 +18,7 @@ final class ConsignmentRequestFactory
 	/** @var DOMDocument */
 	private $dom;
 
-	public function create(Consignment $consignment): string
+	public function create(Consignment $consignment): DOMDocument
 	{
 		$this->consignment = $consignment;
 		$this->dom = new DOMDocument('1.0', 'UTF-8');
@@ -34,7 +34,7 @@ final class ConsignmentRequestFactory
 		$this->addFiles($root);
 		$this->addCheque($root);
 
-		return $this->dom->saveXML();
+		return $this->dom;
 	}
 
 	private function addBasic(DOMNode $root): void

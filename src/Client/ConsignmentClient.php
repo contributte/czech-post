@@ -2,10 +2,10 @@
 
 namespace Contributte\CzechPost\Client;
 
+use Contributte\CzechPost\Entity\Consignment;
 use Contributte\CzechPost\Exception\LogicalException;
 use Contributte\CzechPost\Http\AbstractCpostHttpClient;
 use Contributte\CzechPost\Http\HttpClient;
-use Contributte\CzechPost\XmlRequest\Consignment\Consignment;
 use Contributte\CzechPost\XmlRequest\ConsignmentRequestFactory;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -17,6 +17,8 @@ class ConsignmentClient extends AbstractCpostHttpClient
 	private const PATH_CONSIGNMENT_SEND = 'donApi.php';
 
 	private const PATH_CONSIGNMENT_DETAIL = 'donPrehledZak.php';
+
+	private const PATH_CONSIGNMENT_LABEL = 'podlist.php';
 
 	/** @var ConsignmentRequestFactory */
 	private $requestFactory;
@@ -35,7 +37,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 	{
 		$tmpFile = $this->getTmpDir() . bin2hex(random_bytes(12)) . '.xml';
 		$xml = $this->requestFactory->create($consignment);
-		$this->createTmpFile($tmpFile, $xml);
+		$this->createTmpFile($tmpFile, $xml->saveXML());
 
 		$options = array_merge(
 			$this->getCommonRequestOptions(),
@@ -68,9 +70,9 @@ class ConsignmentClient extends AbstractCpostHttpClient
 		return $response;
 	}
 
-	public function getConsignment(?string $consignmentId = null, ?DateTimeInterface $date = null): ResponseInterface
+	public function getConsignment(?string $id = null, ?DateTimeInterface $date = null): ResponseInterface
 	{
-		if ($consignmentId === null && $date === null) {
+		if ($id === null && $date === null) {
 			throw new InvalidArgumentException('You must provide consignmentId and/or date params');
 		}
 
@@ -85,8 +87,8 @@ class ConsignmentClient extends AbstractCpostHttpClient
 				'form_params' => [
 					'user' => $this->getUsername(),
 					'password' => $this->getPassword(),
-					'zasilka' => $consignmentId ?? '',
-					'datum' => $consignmentId !== null ? '' : $dateString,
+					'zasilka' => $id ?? '',
+					'datum' => $id !== null ? '' : $dateString,
 				],
 				'defaults' => [
 					'headers' => [
@@ -97,6 +99,28 @@ class ConsignmentClient extends AbstractCpostHttpClient
 		);
 
 		return $this->httpClient->request('POST', self::PATH_CONSIGNMENT_DETAIL, $options);
+	}
+
+	public function getConfirmationLabel(string $trackingNumber): ResponseInterface
+	{
+		$options = array_merge(
+			$this->getCommonRequestOptions(),
+			[
+				'form_params' => [
+					'user' => $this->getUsername(),
+					'password' => $this->getPassword(),
+					'podcislo' => $trackingNumber,
+					'typvystupu' => 'D',
+				],
+				'defaults' => [
+					'headers' => [
+						'Content-Type' => 'application/x-www-form-urlencoded',
+					],
+				],
+			]
+		);
+
+		return $this->httpClient->request('POST', self::PATH_CONSIGNMENT_LABEL, $options);
 	}
 
 	private function createTmpFile(string $path, string $content): void

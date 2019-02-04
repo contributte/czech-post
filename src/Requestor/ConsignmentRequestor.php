@@ -3,10 +3,11 @@
 namespace Contributte\CzechPost\Requestor;
 
 use Contributte\CzechPost\Client\ConsignmentClient;
+use Contributte\CzechPost\Entity\Consignment;
+use Contributte\CzechPost\Entity\Dispatch;
 use Contributte\CzechPost\Exception\Logical\XmlException;
 use Contributte\CzechPost\Exception\Runtime\ResponseException;
 use Contributte\CzechPost\Utils\Helpers;
-use Contributte\CzechPost\XmlRequest\Consignment\Consignment;
 use DateTimeInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,37 +22,59 @@ class ConsignmentRequestor extends AbstractRequestor
 		$this->client = $client;
 	}
 
-	public function sendConsignment(Consignment $consignment): ResponseInterface
+	public function sendConsignment(Consignment $consignment): Dispatch
 	{
 		$response = $this->client->sendConsignment($consignment);
+		$data = $this->validateXmlResponse($response);
 
-		$this->assertResponse($response);
-
-		return $response;
+		return Dispatch::fromArray($data);
 	}
 
-	public function getConsignmentsOverview(string $consignmentId): ResponseInterface
+	public function getConsignmentOverview(string $id): Dispatch
 	{
-		$response = $this->client->getConsignment($consignmentId);
+		$response = $this->client->getConsignment($id);
+		$data = $this->validateXmlResponse($response);
 
-		$this->assertResponse($response);
+		if (!isset($data['zakazka'])) {
+			throw new ResponseException($response, sprintf('No "zakazka" found for given id: %s', $id));
+		}
 
-		return $response;
+		return Dispatch::fromArray($data['zakazka']);
 	}
 
-	public function getConsignmentsByDate(DateTimeInterface $date): ResponseInterface
+	/**
+	 * @return Dispatch[]
+	 */
+	public function getConsignmentsByDate(DateTimeInterface $date): array
 	{
 		$response = $this->client->getConsignment(null, $date);
+		$data = $this->validateXmlResponse($response);
 
-		$this->assertResponse($response);
+		if (!isset($data['zakazka'])) {
+			throw new ResponseException($response, sprintf('No "zakazka" found for given date: %s', $date->format('Y-m-d')));
+		}
 
-		return $response;
+		$dis = [];
+		foreach ($data['zakazka'] as $order) {
+			$dis[] = Dispatch::fromArray($order);
+		}
+
+		return $dis;
+	}
+
+	public function getConsignmentLabel(string $trackingNumber): string
+	{
+		$response = $this->client->getConfirmationLabel($trackingNumber);
+		parent::assertResponse($response, [200]);
+
+		return $response->getBody()->getContents();
 	}
 
 	/**
 	 * @param int[] $allowedStatusCodes
+	 * @return mixed[]
 	 */
-	protected function assertResponse(ResponseInterface $response, array $allowedStatusCodes = [200]): void
+	protected function validateXmlResponse(ResponseInterface $response, array $allowedStatusCodes = [200]): array
 	{
 		parent::assertResponse($response, $allowedStatusCodes);
 
@@ -82,6 +105,16 @@ class ConsignmentRequestor extends AbstractRequestor
 				sprintf('Response contains error code: %s', $data['chyby']['@attributes']['stav'])
 			);
 		}
+
+			// xml error node is present
+		if (isset($data['kod']) && isset($data['popis'])) {
+			throw new ResponseException(
+				$response,
+				sprintf('Error: %s, Code: %s', (string) $data['popis'], (string) $data['kod'])
+			);
+		}
+
+		return $data;
 	}
 
 }
