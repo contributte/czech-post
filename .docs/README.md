@@ -31,6 +31,11 @@ By passing this entity object to `sendConsignment` method you should get `Dispat
 Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods, 
 which should be used for calling `getConsignmentsOverview` and `getConsignmentLabel` methods.
 
+### Errors
+
+In case of invalid request the `RequestException` is being thrown.
+When there is some problem with getting response or unexpected response data format, the `ResponseException` is thrown. 
+
 ### Rootquestor
 
 This is high-level way how to manage API.
@@ -58,12 +63,17 @@ public $consignmentRequestor;
 
 **ConsignmentRequestor**
 
-| Method                                                | API path              | Type |
-| ------------------------------------------------------| ----------------------|----- |
-| sendConsignment(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
-| getConsignmentsOverview(string $id): Dispatch         | .../donPrehledZak.php | POST |
-| getConsignmentsByDate(DateTime $date): []Dispatch     | .../donPrehledZak.php | POST |
-| getConsignmentLabel(string $trackingNumber): string   | .../podlist.php       | POST |
+| Method                                     | API path              | Type |
+| -------------------------------------------| ----------------------|----- |
+| send(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
+| getDetail(string $id): Dispatch            | .../donPrehledZak.php | POST |
+| findByDate(DateTime $date): Dispatch[]     | .../donPrehledZak.php | POST |
+| printLabel(string $trackingNumber): string | .../podlist.php       | POST |
+| listCancelable(): CancelableDispatch[]     | .../donStorno.php     | POST |
+| cancel(string $id): void                   | .../donStorno.php     | POST |
+| fetchPayOffTypes(): string[]               | .../vratCiselnik.php  | POST |
+| fetchPaymentTypes(): string[]              | .../vratCiselnik.php  | POST |
+| fetchIsoCodes(): string[]                  | .../vratCiselnik.php  | POST |
 
 _Note: the string returned by `getConsignmentLabel` method is the content of pdf file._
 
