@@ -23,7 +23,7 @@ final class UsageTest extends TestCase
 
 	protected function setUp(): void
 	{
-		$this->markAsRisky('This is integration test against Ceska Posta testing environment.');
+		$this->markTestSkipped('This is integration test against Ceska Posta testing environment.');
 
 		$config = [
 			'http' => [
