@@ -14,11 +14,11 @@ use Psr\Http\Message\ResponseInterface;
 class ConsignmentClient extends AbstractCpostHttpClient
 {
 
-	private const PATH_CONSIGNMENT_SEND = 'donApi.php';
-
-	private const PATH_CONSIGNMENT_DETAIL = 'donPrehledZak.php';
-
-	private const PATH_CONSIGNMENT_LABEL = 'podlist.php';
+	private const PATH_SEND   = 'donApi.php';
+	private const PATH_DETAIL = 'donPrehledZak.php';
+	private const PATH_LABEL  = 'podlist.php';
+	private const PATH_CANCEL = 'donStorno.php';
+	private const PATH_ENUMS  = 'vratCiselnik.php';
 
 	/** @var ConsignmentRequestFactory */
 	private $requestFactory;
@@ -33,7 +33,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 		$this->requestFactory = new ConsignmentRequestFactory();
 	}
 
-	public function sendConsignment(Consignment $consignment): ResponseInterface
+	public function send(Consignment $consignment): ResponseInterface
 	{
 		$tmpFile = $this->getTmpDir() . bin2hex(random_bytes(12)) . '.xml';
 		$xml = $this->requestFactory->create($consignment);
@@ -64,13 +64,13 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		$response = $this->httpClient->request('POST', self::PATH_CONSIGNMENT_SEND, $options);
+		$response = $this->httpClient->request('POST', self::PATH_SEND, $options);
 		unlink($tmpFile);
 
 		return $response;
 	}
 
-	public function getConsignment(?string $id = null, ?DateTimeInterface $date = null): ResponseInterface
+	public function find(?string $id = null, ?DateTimeInterface $date = null): ResponseInterface
 	{
 		if ($id === null && $date === null) {
 			throw new InvalidArgumentException('You must provide consignmentId and/or date params');
@@ -98,10 +98,10 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		return $this->httpClient->request('POST', self::PATH_CONSIGNMENT_DETAIL, $options);
+		return $this->httpClient->request('POST', self::PATH_DETAIL, $options);
 	}
 
-	public function getConfirmationLabel(string $trackingNumber): ResponseInterface
+	public function printLabel(string $trackingNumber): ResponseInterface
 	{
 		$options = array_merge(
 			$this->getCommonRequestOptions(),
@@ -120,7 +120,69 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		return $this->httpClient->request('POST', self::PATH_CONSIGNMENT_LABEL, $options);
+		return $this->httpClient->request('POST', self::PATH_LABEL, $options);
+	}
+
+	public function cancel(?string $id = null): ResponseInterface
+	{
+		$options = array_merge(
+			$this->getCommonRequestOptions(),
+			[
+				'form_params' => [
+					'user' => $this->getUsername(),
+					'password' => $this->getPassword(),
+					'typ' => $id === null ? '0' : '1',
+				],
+				'defaults' => [
+					'headers' => [
+						'Content-Type' => 'application/x-www-form-urlencoded',
+					],
+				],
+			]
+		);
+
+		if ($id !== null) {
+			$options['form_params']['zasilka'] = $id;
+		}
+
+		return $this->httpClient->request('POST', self::PATH_CANCEL, $options);
+	}
+
+	public function fetchEnum(bool $payoffType, bool $paymentType, bool $iso): ResponseInterface
+	{
+		$options = array_merge(
+			$this->getCommonRequestOptions(),
+			[
+				'form_params' => [
+					'user' => $this->getUsername(),
+					'password' => $this->getPassword(),
+				],
+				'defaults' => [
+					'headers' => [
+						'Content-Type' => 'application/x-www-form-urlencoded',
+					],
+				],
+			]
+		);
+		$type = null;
+
+		if ($payoffType === true) {
+			$type = 'typvyplatneho';
+		}
+		if ($paymentType === true) {
+			$type = 'typuhrady';
+		}
+		if ($iso === true) {
+			$type = 'iso';
+		}
+
+		if ($type === null) {
+			throw new LogicalException('Type of enum to fetch not specified.');
+		}
+
+		$options['form_params']['typciselniku'] = $type;
+
+		return $this->httpClient->request('POST', self::PATH_ENUMS, $options);
 	}
 
 	private function createTmpFile(string $path, string $content): void
