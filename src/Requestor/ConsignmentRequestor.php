@@ -31,7 +31,7 @@ class ConsignmentRequestor extends AbstractRequestor
 		return Dispatch::fromArray($data);
 	}
 
-	public function getDetail(string $id): Dispatch
+	public function detail(string $id): Dispatch
 	{
 		$response = $this->client->find($id);
 		$data = $this->validateXmlResponse($response);
@@ -56,8 +56,13 @@ class ConsignmentRequestor extends AbstractRequestor
 		}
 
 		$dis = [];
-		foreach ($data['zakazka'] as $order) {
-			$dis[] = Dispatch::fromArray($order);
+		// in 'zakazka' field array of dispatches or just single dispatch can be present
+		if (array_key_exists(0, $data['zakazka'])) {
+			foreach ($data['zakazka'] as $order) {
+				$dis[] = Dispatch::fromArray($order);
+			}
+		} else {
+			$dis[] = Dispatch::fromArray($data['zakazka']);
 		}
 
 		return $dis;

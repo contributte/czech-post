@@ -3,10 +3,12 @@
 namespace Contributte\CzechPost\DI;
 
 use Contributte\CzechPost\Client\ConsignmentClient;
+use Contributte\CzechPost\Client\ParcelHistoryClient;
 use Contributte\CzechPost\CpostRootquestor;
 use Contributte\CzechPost\Http\GuzzleClient;
 use Contributte\CzechPost\Http\HttpClient;
 use Contributte\CzechPost\Requestor\ConsignmentRequestor;
+use Contributte\CzechPost\Requestor\ParcelHistoryRequestor;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Nette\DI\CompilerExtension;
@@ -17,10 +19,12 @@ class CzechPostExtension extends CompilerExtension
 	/** @var mixed[] */
 	protected $defaults = [
 		'http' => [
-			'base_uri' => null,
-			'auth' => [],
+			'base_uri' => 'https://online.postservis.cz/',
+			'auth' => ['user', 'pass'],
 		],
-		'config' => [],
+		'config' => [
+			'tmp_dir' => 'path/to/tmp/dir',
+		],
 	];
 
 	public function loadConfiguration(): void
@@ -43,9 +47,15 @@ class CzechPostExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('client.consignment'))
 			->setFactory(ConsignmentClient::class, [$this->prefix('@http.client'), $config]);
 
+		$builder->addDefinition($this->prefix('client.history'))
+			->setFactory(ParcelHistoryClient::class, [$this->prefix('@http.client'), $config]);
+
 		// #3 Requestors
 		$builder->addDefinition($this->prefix('requestor.consignment'))
 			->setFactory(ConsignmentRequestor::class, [$this->prefix('@client.consignment')]);
+
+		$builder->addDefinition($this->prefix('requestor.history'))
+			->setFactory(ParcelHistoryRequestor::class, [$this->prefix('@client.history')]);
 
 		// #4 Rootquestor
 		$builder->addDefinition($this->prefix('rootquestor'))
@@ -53,7 +63,8 @@ class CzechPostExtension extends CompilerExtension
 
 		// #4 -> #3 connect rootquestor to requestors
 		$builder->getDefinition($this->prefix('rootquestor'))
-			->addSetup('add', ['consignment', $this->prefix('@requestor.consignment')]);
+			->addSetup('add', ['consignment', $this->prefix('@requestor.consignment')])
+			->addSetup('add', ['history', $this->prefix('@requestor.history')]);
 	}
 
 }
