@@ -164,8 +164,8 @@ final class UsageTest extends TestCase
 		$this->assertCount(58, $codes);
 		$this->assertEquals('Irsko', $codes['IE']);
 	}
-  
-  public function testParcelHistoryInvalidTrackingNumber(): void
+
+	public function testParcelHistoryInvalidTrackingNumber(): void
 	{
 		$this->expectException(ResponseException::class);
 		$this->expectExceptionMessage('Tracking error "Pro tento druh zásilek Česká pošta informace nezobrazuje."');
