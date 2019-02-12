@@ -47,6 +47,7 @@ public $cpost;
 public function magic(): void
 {
      $this->cpost->consignment->sendConsignment($consignment);
+     $this->cpost->history->status('RRXXYYZZ');
 }
 ```
 
@@ -59,6 +60,9 @@ You could also directly access individual requestors
 ```php
 /** @var ConsignmentRequestor @inject */
 public $consignmentRequestor;
+
+/** @var ParcelHistoryRequestor @inject */
+public $parcelHistoryRequestor;
 ```
 
 **ConsignmentRequestor**
@@ -66,7 +70,7 @@ public $consignmentRequestor;
 | Method                                     | API path              | Type |
 | -------------------------------------------| ----------------------|----- |
 | send(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
-| getDetail(string $id): Dispatch            | .../donPrehledZak.php | POST |
+| detail(string $id): Dispatch               | .../donPrehledZak.php | POST |
 | findByDate(DateTime $date): Dispatch[]     | .../donPrehledZak.php | POST |
 | printLabel(string $trackingNumber): string | .../podlist.php       | POST |
 | listCancelable(): CancelableDispatch[]     | .../donStorno.php     | POST |
@@ -76,6 +80,15 @@ public $consignmentRequestor;
 | fetchIsoCodes(): string[]                  | .../vratCiselnik.php  | POST |
 
 _Note: the string returned by `getConsignmentLabel` method is the content of pdf file._
+
+**ParcelHistoryRequestor**
+
+Allows you to track the parcel. `history()` returns the full parcel state history whereas `status()` returns the last parcel state.
+
+| Method                                     | API path                                                              | Type |
+| -------------------------------------------| ----------------------------------------------------------------------|----- |
+| history(string $trackingNumber): []State   | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
+| status(string $trackingNumber): State      | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 
 ### Client
 

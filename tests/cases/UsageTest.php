@@ -3,11 +3,13 @@
 namespace Tests\Cases\Contributte\CzechPost;
 
 use Contributte\CzechPost\Client\ConsignmentClient;
+use Contributte\CzechPost\Client\ParcelHistoryClient;
 use Contributte\CzechPost\Entity\CancelableDispatch;
 use Contributte\CzechPost\Entity\Dispatch;
 use Contributte\CzechPost\Exception\Runtime\ResponseException;
 use Contributte\CzechPost\Http\GuzzleClient;
 use Contributte\CzechPost\Requestor\ConsignmentRequestor;
+use Contributte\CzechPost\Requestor\ParcelHistoryRequestor;
 use DateTimeImmutable;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +22,9 @@ final class UsageTest extends TestCase
 
 	/** @var ConsignmentRequestor */
 	private $cpost;
+
+	/** @var ParcelHistoryRequestor */
+	private $history;
 
 	protected function setUp(): void
 	{
@@ -36,11 +41,15 @@ final class UsageTest extends TestCase
 		];
 
 		$guzzle = new GuzzleClient(new Client($config['http']));
-		$client = new ConsignmentClient($guzzle, $config);
-		$this->cpost = new ConsignmentRequestor($client);
+
+		$cpostClient = new ConsignmentClient($guzzle, $config);
+		$this->cpost = new ConsignmentRequestor($cpostClient);
+
+		$historyClient = new ParcelHistoryClient($guzzle);
+		$this->history = new ParcelHistoryRequestor($historyClient);
 	}
 
-	public function testSendConsignment(): Dispatch
+	public function testSend(): Dispatch
 	{
 		$dispatch = $this->cpost->send(ConsignmentRequestFactoryTest::createConsignmentWithoutCheque());
 
@@ -51,7 +60,7 @@ final class UsageTest extends TestCase
 		return $dispatch;
 	}
 
-	public function testSendConsignmentWithCheque(): void
+	public function testSendWithCheque(): void
 	{
 		$dispatch = $this->cpost->send(ConsignmentRequestFactoryTest::createConsignmentWithCheque());
 
@@ -61,16 +70,66 @@ final class UsageTest extends TestCase
 	}
 
 	/**
-	 * @depends testSendConsignment
+	 * @depends testSend
 	 */
-	public function testGetConsignmentsOverview(Dispatch $dispatch): void
+	public function testGetDetail(Dispatch $dispatch): void
 	{
-		$overview = $this->cpost->getDetail($dispatch->getId());
+		$overview = $this->cpost->detail($dispatch->getId());
 		$this->assertConsignmentDispatch($overview);
 	}
 
+	public function testParcelHistoryInvalidTrackingNumber(): void
+	{
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage('Tracking error "Pro tento druh zásilek Česká pošta informace nezobrazuje."');
+		$this->history->history('invalid');
+	}
+
+	public function testParcelHistoryParcelNotFound(): void
+	{
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage('Tracking error "Zásilka tohoto podacího čísla není v evidenci."');
+		$this->history->history('RR2599903552');
+	}
+
+	public function testParcelHistory(): void
+	{
+		$states = $this->history->history('RR2599903371F');
+
+		$this->assertCount(5, $states);
+
+		$this->assertEquals('Obdrženy údaje k zásilce.', $states[0]->getText());
+		$this->assertEquals('2019-01-25', $states[0]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[0]->getPostCode());
+
+		$this->assertEquals('Zásilka převzata do přepravy.', $states[1]->getText());
+		$this->assertEquals('2019-01-25', $states[1]->getDate()->format('Y-m-d'));
+		$this->assertEquals('37020', $states[1]->getPostCode());
+
+		$this->assertEquals('Příprava zásilky k doručení.', $states[2]->getText());
+		$this->assertEquals('2019-01-28', $states[2]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[2]->getPostCode());
+
+		$this->assertEquals('Doručování zásilky.', $states[3]->getText());
+		$this->assertEquals('2019-01-28', $states[3]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[3]->getPostCode());
+
+		$this->assertEquals('Dodání zásilky.', $states[4]->getText());
+		$this->assertEquals('2019-01-28', $states[4]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[4]->getPostCode());
+	}
+
+	public function testParcelStatus(): void
+	{
+		$currentState = $this->history->status('RR2599903371F');
+
+		$this->assertEquals('Dodání zásilky.', $currentState->getText());
+		$this->assertEquals('2019-01-28', $currentState->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $currentState->getPostCode());
+	}
+
 	/**
-	 * @depends testSendConsignment
+	 * @depends testSend
 	 */
 	public function testGetConsignmentLabel(Dispatch $dispatch): void
 	{
@@ -86,7 +145,7 @@ final class UsageTest extends TestCase
 	{
 		$this->expectException(ResponseException::class);
 		$this->expectExceptionMessage('Error: Zakázka č. some-invalid-id neexistuje., Code: -9');
-		$this->cpost->getDetail('some-invalid-id');
+		$this->cpost->detail('some-invalid-id');
 	}
 
 	public function testGetConsignmentByDate(): void
