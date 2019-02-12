@@ -31,6 +31,7 @@ class ConsignmentRequestor extends AbstractRequestor
 		return Dispatch::fromArray($data);
 	}
 
+
 	public function detail(string $id): Dispatch
 	{
 		$response = $this->client->find($id);

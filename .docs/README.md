@@ -90,6 +90,7 @@ Allows you to track the parcel. `history()` returns the full parcel state histor
 | history(string $trackingNumber): []State   | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 | status(string $trackingNumber): State      | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 
+
 ### Client
 
 This is very low-level of managing API. It's basically only configured
