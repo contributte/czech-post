@@ -20,10 +20,10 @@ class CzechPostExtension extends CompilerExtension
 	protected $defaults = [
 		'http' => [
 			'base_uri' => 'https://online.postservis.cz/',
-			'auth' => ['user', 'pass'],
+			'auth' => ['', ''],
 		],
 		'config' => [
-			'tmp_dir' => 'path/to/tmp/dir',
+			'tmp_dir' => '',
 		],
 	];
 
