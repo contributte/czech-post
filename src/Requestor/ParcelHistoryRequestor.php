@@ -4,6 +4,7 @@ namespace Contributte\CzechPost\Requestor;
 
 use Contributte\CzechPost\Client\ParcelHistoryClient;
 use Contributte\CzechPost\Entity\State;
+use Contributte\CzechPost\Enum\HistoryState;
 use Contributte\CzechPost\Exception\LogicalException;
 use Contributte\CzechPost\Exception\Runtime\ResponseException;
 use Nette\Utils\Json;
@@ -19,6 +20,17 @@ final class ParcelHistoryRequestor extends AbstractRequestor
 	public function __construct(ParcelHistoryClient $client)
 	{
 		$this->client = $client;
+	}
+
+	public function isDelivered(string $trackingNumber): bool
+	{
+		try {
+			$currentState = $this->status($trackingNumber);
+
+			return HistoryState::isDeliveredSuccessfully($currentState->getId());
+		} catch (ResponseException $e) {
+			return false;
+		}
 	}
 
 	public function status(string $trackingNumber): State
@@ -75,9 +87,20 @@ final class ParcelHistoryRequestor extends AbstractRequestor
 			throw new ResponseException($response, 'Response does not contain any parcel state');
 		}
 
-		$firstState = $data[0]->states->state[0];
-		if (!isset($firstState->id) || (int) $firstState->id < 0) {
-			throw new ResponseException($response, sprintf('Tracking error "%s"', $firstState->text));
+		$first = $data[0]->states->state[0];
+		$text = $first->text ?? '';
+		if (!isset($first->id) || !HistoryState::isKnownState($first->id)) {
+			throw new ResponseException(
+				$response,
+				sprintf('Unknown parcel state "%s". Description: "%s"', $first->id, $text)
+			);
+		}
+
+		if (HistoryState::isErrorState($first->id)) {
+			throw new ResponseException(
+				$response,
+				sprintf('Parcel tracking error. State: %s, Description: "%s"', $first->id, $text)
+			);
 		}
 
 		return $data[0]->states->state;

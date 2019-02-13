@@ -31,9 +31,9 @@ final class State
 	public static function fromArray(array $data): self
 	{
 		$st = new self();
-		$st->id = $data['id'] ?? '';
+		$st->id = $data['id'];
 		$st->date = new DateTimeImmutable($data['date']);
-		$st->text = $data['text'];
+		$st->text = $data['text'] ?? '';
 
 		$st->postCode = $data['postcode'] ?? null;
 		$st->postOffice = $data['postoffice'] ?? null;
