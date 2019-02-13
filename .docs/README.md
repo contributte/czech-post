@@ -87,6 +87,7 @@ Allows you to track the parcel. `history()` returns the full parcel state histor
 
 | Method                                     | API path                                                              | Type |
 | -------------------------------------------| ----------------------------------------------------------------------|----- |
+| isDelivered(string $trackingNumber): bool  | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 | history(string $trackingNumber): []State   | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 | status(string $trackingNumber): State      | https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s | GET  |
 
