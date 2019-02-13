@@ -78,56 +78,6 @@ final class UsageTest extends TestCase
 		$this->assertConsignmentDispatch($overview);
 	}
 
-	public function testParcelHistoryInvalidTrackingNumber(): void
-	{
-		$this->expectException(ResponseException::class);
-		$this->expectExceptionMessage('Tracking error "Pro tento druh zásilek Česká pošta informace nezobrazuje."');
-		$this->history->history('invalid');
-	}
-
-	public function testParcelHistoryParcelNotFound(): void
-	{
-		$this->expectException(ResponseException::class);
-		$this->expectExceptionMessage('Tracking error "Zásilka tohoto podacího čísla není v evidenci."');
-		$this->history->history('RR2599903552');
-	}
-
-	public function testParcelHistory(): void
-	{
-		$states = $this->history->history('RR2599903371F');
-
-		$this->assertCount(5, $states);
-
-		$this->assertEquals('Obdrženy údaje k zásilce.', $states[0]->getText());
-		$this->assertEquals('2019-01-25', $states[0]->getDate()->format('Y-m-d'));
-		$this->assertNull($states[0]->getPostCode());
-
-		$this->assertEquals('Zásilka převzata do přepravy.', $states[1]->getText());
-		$this->assertEquals('2019-01-25', $states[1]->getDate()->format('Y-m-d'));
-		$this->assertEquals('37020', $states[1]->getPostCode());
-
-		$this->assertEquals('Příprava zásilky k doručení.', $states[2]->getText());
-		$this->assertEquals('2019-01-28', $states[2]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[2]->getPostCode());
-
-		$this->assertEquals('Doručování zásilky.', $states[3]->getText());
-		$this->assertEquals('2019-01-28', $states[3]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[3]->getPostCode());
-
-		$this->assertEquals('Dodání zásilky.', $states[4]->getText());
-		$this->assertEquals('2019-01-28', $states[4]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[4]->getPostCode());
-	}
-
-	public function testParcelStatus(): void
-	{
-		$currentState = $this->history->status('RR2599903371F');
-
-		$this->assertEquals('Dodání zásilky.', $currentState->getText());
-		$this->assertEquals('2019-01-28', $currentState->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $currentState->getPostCode());
-	}
-
 	/**
 	 * @depends testSend
 	 */
@@ -212,6 +162,65 @@ final class UsageTest extends TestCase
 		$codes = $this->cpost->fetchIsoCodes();
 		$this->assertCount(58, $codes);
 		$this->assertEquals('Irsko', $codes['IE']);
+	}
+
+	public function testParcelHistoryInvalidTrackingNumber(): void
+	{
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage(
+			'Parcel tracking error. State: -4, Description: "Pro tento druh zásilek Česká pošta informace nezobrazuje."'
+		);
+		$this->history->history('invalid');
+	}
+
+	public function testParcelHistoryParcelNotFound(): void
+	{
+		$this->expectException(ResponseException::class);
+		$this->expectExceptionMessage(
+			'Parcel tracking error. State: -3, Description: "Zásilka tohoto podacího čísla není v evidenci."'
+		);
+		$this->history->history('RR2599903552');
+	}
+
+	public function testParcelHistory(): void
+	{
+		$states = $this->history->history('RR2599903371F');
+
+		$this->assertCount(5, $states);
+
+		$this->assertEquals('Obdrženy údaje k zásilce.', $states[0]->getText());
+		$this->assertEquals('2019-01-25', $states[0]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[0]->getPostCode());
+
+		$this->assertEquals('Zásilka převzata do přepravy.', $states[1]->getText());
+		$this->assertEquals('2019-01-25', $states[1]->getDate()->format('Y-m-d'));
+		$this->assertEquals('37020', $states[1]->getPostCode());
+
+		$this->assertEquals('Příprava zásilky k doručení.', $states[2]->getText());
+		$this->assertEquals('2019-01-28', $states[2]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[2]->getPostCode());
+
+		$this->assertEquals('Doručování zásilky.', $states[3]->getText());
+		$this->assertEquals('2019-01-28', $states[3]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[3]->getPostCode());
+
+		$this->assertEquals('Dodání zásilky.', $states[4]->getText());
+		$this->assertEquals('2019-01-28', $states[4]->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $states[4]->getPostCode());
+	}
+
+	public function testParcelHistoryIsDelivered(): void
+	{
+		$this->assertTrue($this->history->isDelivered('RR2599903371F'));
+	}
+
+	public function testParcelStatus(): void
+	{
+		$currentState = $this->history->status('RR2599903371F');
+
+		$this->assertEquals('Dodání zásilky.', $currentState->getText());
+		$this->assertEquals('2019-01-28', $currentState->getDate()->format('Y-m-d'));
+		$this->assertEquals('76700', $currentState->getPostCode());
 	}
 
 	private function assertConsignmentDispatch(Dispatch $confirm): void
