@@ -41,7 +41,7 @@ abstract class AbstractCpostHttpClient
 	protected function getTmpDir(): string
 	{
 		if (!array_key_exists('config', $this->config) || !isset($this->config['config']['tmp_dir'])) {
-			throw new InvalidArgumentException('Mandatory CPost "tmp_dir" config missing');
+			return sys_get_temp_dir();
 		}
 
 		return $this->config['config']['tmp_dir'];
@@ -53,8 +53,12 @@ abstract class AbstractCpostHttpClient
 			throw new InvalidArgumentException('Mandatory "auth" section of Cpost client configuration is missing.');
 		}
 
-		if (!isset($this->config['http']['auth'][0]) || !isset($this->config['http']['auth'][1])) {
-			throw new InvalidArgumentException('You must provide both auth username and password for Cpost client');
+		if (!isset($this->config['http']['auth'][0]) || strlen($this->config['http']['auth'][0]) === 0) {
+			throw new InvalidArgumentException('You must provide valid auth Cpost client username');
+		}
+
+		if (!isset($this->config['http']['auth'][1]) || strlen($this->config['http']['auth'][1]) === 0) {
+			throw new InvalidArgumentException('You must provide valid auth Cpost client password');
 		}
 	}
 
