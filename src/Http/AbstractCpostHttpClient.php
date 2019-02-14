@@ -54,7 +54,7 @@ abstract class AbstractCpostHttpClient
 		}
 
 		if (!isset($this->config['http']['auth'][0]) || !isset($this->config['http']['auth'][1])) {
-			throw new InvalidArgumentException('You must provide both  auth username and password for Cpost client');
+			throw new InvalidArgumentException('You must provide both auth username and password for Cpost client');
 		}
 	}
 
