@@ -183,6 +183,7 @@ final class Dispatch
 		if (isset($data['@attributes']) && isset($data['@attributes']['id'])) {
 			$id = (string) $data['@attributes']['id'];
 		}
+
 		if (isset($data['kodobjednavky'])) {
 			$id = (string) $data['kodobjednavky'];
 		}

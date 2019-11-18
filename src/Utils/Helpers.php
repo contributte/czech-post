@@ -39,6 +39,7 @@ final class Helpers
 			foreach (libxml_get_errors() as $error) {
 				throw new XmlException(sprintf('Could not parse xml string. Error: %s', $error->message));
 			}
+
 			libxml_clear_errors();
 		}
 

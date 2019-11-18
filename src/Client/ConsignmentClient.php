@@ -169,9 +169,11 @@ class ConsignmentClient extends AbstractCpostHttpClient
 		if ($payoffType === true) {
 			$type = 'typvyplatneho';
 		}
+
 		if ($paymentType === true) {
 			$type = 'typuhrady';
 		}
+
 		if ($iso === true) {
 			$type = 'iso';
 		}

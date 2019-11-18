@@ -108,12 +108,14 @@ final class ConsignmentRequestFactory
 		foreach ($ch->getRecipientAddressLines() as $key => $line) {
 			$accountOwnerAddr->appendChild($this->el('adr' . ((int) $key + 1), $line));
 		}
+
 		$cheque->appendChild($accountOwnerAddr);
 
 		$senderAddr = $this->dom->createElement('odesilatel');
 		foreach ($ch->getRecipientAddressLines() as $key => $line) {
 			$senderAddr->appendChild($this->el('adr' . ((int) $key + 1), $line));
 		}
+
 		$cheque->appendChild($senderAddr);
 	}
 

@@ -60,6 +60,7 @@ abstract class ContainerTestCase extends TestCase
 					],
 				]);
 			}
+
 			if ($this->coptions['classUnique'] === true) {
 				$compiler->addConfig([
 					'parameters' => [
@@ -67,6 +68,7 @@ abstract class ContainerTestCase extends TestCase
 					],
 				]);
 			}
+
 			if ($this->coptions['parameters'] === true) {
 				$compiler->addConfig([
 					'parameters' => $this->coptions['parameters'],
