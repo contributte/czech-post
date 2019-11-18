@@ -2,7 +2,23 @@
 
 [Czech Post](https://www.ceskaposta.cz/en/index) API client
 
-## Configuration
+## Content
+
+- [Setup](#setup)
+- [Usage](#usage)
+  - [Rootquestor](#rootquestor)
+  - [Requestors](#requestors)
+  - [Client](#client)
+
+## Setup
+
+Require package
+
+```sh
+composer require contributte/czech-post
+```
+
+Configure extension
 
 ```yaml
 extensions:

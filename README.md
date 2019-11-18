@@ -2,8 +2,6 @@
 
 [Czech Post - Dopis online](https://online.postservis.cz/) API client
 
------
-
 [![Build Status](https://img.shields.io/travis/contributte/czech-post.svg?style=flat-square)](https://travis-ci.org/contributte/czech-post)
 [![Code coverage](https://img.shields.io/coveralls/contributte/czech-post.svg?style=flat-square)](https://coveralls.io/r/contributte/czech-post)
 [![Licence](https://img.shields.io/packagist/l/contributte/czech-post.svg?style=flat-square)](https://packagist.org/packages/contributte/czech-post)
@@ -16,11 +14,13 @@
 
 [![Join the chat](https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square)](https://gitter.im/contributte/contributte)
 
-## Install
+## Documentation
 
-```sh
-composer require contributte/czech-post
-```
+- [Setup](.docs/README.md#setup)
+- [Usage](.docs/README.md#usage)
+  - [Rootquestor](.docs/README.md#rootquestor)
+  - [Requestors](.docs/README.md#requestors)
+  - [Client](.docs/README.md#client)
 
 ## Versions
 
@@ -28,14 +28,6 @@ composer require contributte/czech-post
 |-------------|---------|----------|----------|
 | dev         | `^0.2`  | `master` | `>= 7.1` |
 | stable      | `^0.1`  | `master` | `>= 7.1` |
-
-## Overview
-
-- [Configuration](.docs/README.md#configuration)
-- [Usage](.docs/README.md#usage)
-  - [Rootquestor](.docs/README.md#rootquestor)
-  - [Requestors](.docs/README.md#requestors)
-  - [Client](.docs/README.md#client)
 
 ## Maintainers
 
@@ -66,7 +58,5 @@ composer require contributte/czech-post
     </tr>
   </tbody>
 </table>
-
------
 
 Thank you for testing, reporting and contributing.
