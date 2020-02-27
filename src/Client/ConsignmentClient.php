@@ -64,7 +64,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		$response = $this->httpClient->request('POST', self::PATH_SEND, $options);
+		$response = $this->httpClient->request('POST', $this->config['http']['base_uri'] . self::PATH_SEND, $options);
 		unlink($tmpFile);
 
 		return $response;
@@ -98,7 +98,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		return $this->httpClient->request('POST', self::PATH_DETAIL, $options);
+		return $this->httpClient->request('POST', $this->config['http']['base_uri'] . self::PATH_DETAIL, $options);
 	}
 
 	public function printLabel(string $trackingNumber): ResponseInterface
@@ -120,7 +120,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			]
 		);
 
-		return $this->httpClient->request('POST', self::PATH_LABEL, $options);
+		return $this->httpClient->request('POST', $this->config['http']['base_uri'] . self::PATH_LABEL, $options);
 	}
 
 	public function cancel(?string $id = null): ResponseInterface
@@ -145,7 +145,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 			$options['form_params']['zasilka'] = $id;
 		}
 
-		return $this->httpClient->request('POST', self::PATH_CANCEL, $options);
+		return $this->httpClient->request('POST', $this->config['http']['base_uri'] . self::PATH_CANCEL, $options);
 	}
 
 	public function fetchEnum(bool $payoffType, bool $paymentType, bool $iso): ResponseInterface
@@ -184,7 +184,7 @@ class ConsignmentClient extends AbstractCpostHttpClient
 
 		$options['form_params']['typciselniku'] = $type;
 
-		return $this->httpClient->request('POST', self::PATH_ENUMS, $options);
+		return $this->httpClient->request('POST', $this->config['http']['base_uri'] . self::PATH_ENUMS, $options);
 	}
 
 	private function createTmpFile(string $path, string $content): void
