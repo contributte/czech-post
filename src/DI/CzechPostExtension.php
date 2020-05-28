@@ -11,9 +11,9 @@ use Contributte\CzechPost\Requestor\ConsignmentRequestor;
 use Contributte\CzechPost\Requestor\ParcelHistoryRequestor;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use Nette;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 
 class CzechPostExtension extends CompilerExtension
 {
@@ -29,7 +29,7 @@ class CzechPostExtension extends CompilerExtension
 		],
 	];
 
-	public function getConfigSchema(): Nette\Schema\Schema
+	public function getConfigSchema(): Schema
 	{
 		return Expect::structure(
 			[
