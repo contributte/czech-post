@@ -36,8 +36,15 @@ class ConsignmentClient extends AbstractCpostHttpClient
 	public function send(Consignment $consignment): ResponseInterface
 	{
 		$tmpFile = tempnam($this->getTmpDir(), 'CZPost') . '.xml';
+
 		$xml = $this->requestFactory->create($consignment);
-		$this->createTmpFile($tmpFile, $xml->saveXML());
+		$xmldata = $xml->saveXML();
+
+		if ($xmldata === false) {
+			throw new LogicalException('Cannot create XML data');
+		}
+
+		$this->createTmpFile($tmpFile, $xmldata);
 
 		$options = array_merge(
 			$this->getCommonRequestOptions(),
