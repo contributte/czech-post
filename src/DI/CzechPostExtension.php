@@ -12,6 +12,8 @@ use Contributte\CzechPost\Requestor\ParcelHistoryRequestor;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Nette\DI\CompilerExtension;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 
 class CzechPostExtension extends CompilerExtension
 {
@@ -27,10 +29,26 @@ class CzechPostExtension extends CompilerExtension
 		],
 	];
 
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure(
+			[
+				'http' => Expect::structure([
+					'base_uri' => Expect::string('https://online.postservis.cz/'),
+					'auth' => Expect::array(['', '']),
+				]),
+				'config' => Expect::structure([
+					 'tmp_dir' => Expect::type('string|null')->default(null),
+				]),
+
+			]
+		);
+	}
+
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = (array) $this->getConfig();
 
 		// #1 HTTP client
 		$builder->addDefinition($this->prefix('guzzle.client'))
@@ -59,10 +77,7 @@ class CzechPostExtension extends CompilerExtension
 
 		// #4 Rootquestor
 		$builder->addDefinition($this->prefix('rootquestor'))
-			->setFactory(CpostRootquestor::class);
-
-		// #4 -> #3 connect rootquestor to requestors
-		$builder->getDefinition($this->prefix('rootquestor'))
+			->setFactory(CpostRootquestor::class)
 			->addSetup('add', ['consignment', $this->prefix('@requestor.consignment')])
 			->addSetup('add', ['history', $this->prefix('@requestor.history')]);
 	}
