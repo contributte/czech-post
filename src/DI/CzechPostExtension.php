@@ -36,10 +36,10 @@ class CzechPostExtension extends CompilerExtension
 				'http' => Expect::structure([
 					'base_uri' => Expect::string('https://online.postservis.cz/'),
 					'auth' => Expect::array(['', '']),
-														 ]),
+				]),
 				'config' => Expect::structure([
 					 'tmp_dir' => Expect::type('string|null')->default(null),
-														 ]),
+				]),
 
 			]
 		);
