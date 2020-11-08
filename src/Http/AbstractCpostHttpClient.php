@@ -28,36 +28,36 @@ abstract class AbstractCpostHttpClient
 	{
 		$this->assertUsernamePassword();
 
-		return $this->config['http']['auth'][0];
+		return $this->config['http']->auth[0];
 	}
 
 	protected function getPassword(): string
 	{
 		$this->assertUsernamePassword();
 
-		return $this->config['http']['auth'][1];
+		return $this->config['http']->auth[1];
 	}
 
 	protected function getTmpDir(): string
 	{
-		if (!array_key_exists('config', $this->config) || !isset($this->config['config']['tmp_dir'])) {
+		if (!isset($this->config->config) || !isset($this->config->config->tmp_dir)) {
 			return sys_get_temp_dir();
 		}
 
-		return $this->config['config']['tmp_dir'];
+		return $this->config->config->tmp_dir;
 	}
 
 	protected function assertUsernamePassword(): void
 	{
-		if (!array_key_exists('http', $this->config) || !array_key_exists('auth', $this->config['http'])) {
+		if (!isset($this->config['http']) || !isset($this->config['http']->auth)) {
 			throw new InvalidArgumentException('Mandatory "auth" section of Cpost client configuration is missing.');
 		}
 
-		if (!isset($this->config['http']['auth'][0]) || strlen($this->config['http']['auth'][0]) === 0) {
+		if (!isset($this->config['http']->auth[0]) || strlen($this->config['http']->auth[0]) === 0) {
 			throw new InvalidArgumentException('You must provide valid auth Cpost client username');
 		}
 
-		if (!isset($this->config['http']['auth'][1]) || strlen($this->config['http']['auth'][1]) === 0) {
+		if (!isset($this->config['http']->auth[1]) || strlen($this->config['http']->auth[1]) === 0) {
 			throw new InvalidArgumentException('You must provide valid auth Cpost client password');
 		}
 	}
