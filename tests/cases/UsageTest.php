@@ -153,15 +153,15 @@ final class UsageTest extends TestCase
 	public function testFetchPayOffTypes(): void
 	{
 		$types = $this->cpost->fetchPayOffTypes();
-		$this->assertCount(16, $types);
-		$this->assertEquals('DOPORUČENĚ ST NEVRACET, VLOŽIT DO SCHRÁNKY ULOŽIT VŽDY', $types[169]);
+		$this->assertCount(32, $types);
+		$this->assertEquals('DOPORUČENĚ ST PRIORITNĚ NEVRACET, VLOŽIT DO SCHRÁNKY ULOŽIT VŽDY', $types[169]);
 	}
 
 	public function testFetchIsoCodes(): void
 	{
 		$codes = $this->cpost->fetchIsoCodes();
-		$this->assertCount(58, $codes);
-		$this->assertEquals('Irsko', $codes['IE']);
+		$this->assertCount(52, $codes);
+		$this->assertEquals('Irsko (kromě Severního Irska)', $codes['IE']);
 	}
 
 	public function testParcelHistoryInvalidTrackingNumber(): void
@@ -184,43 +184,71 @@ final class UsageTest extends TestCase
 
 	public function testParcelHistory(): void
 	{
-		$states = $this->history->history('RR2599903371F');
+		$states = $this->history->history('DR3304881147U');
 
-		$this->assertCount(5, $states);
+		$this->assertCount(12, $states);
 
 		$this->assertEquals('Obdrženy údaje k zásilce.', $states[0]->getText());
-		$this->assertEquals('2019-01-25', $states[0]->getDate()->format('Y-m-d'));
+		$this->assertEquals('2020-11-05', $states[0]->getDate()->format('Y-m-d'));
 		$this->assertNull($states[0]->getPostCode());
 
 		$this->assertEquals('Zásilka převzata do přepravy.', $states[1]->getText());
-		$this->assertEquals('2019-01-25', $states[1]->getDate()->format('Y-m-d'));
-		$this->assertEquals('37020', $states[1]->getPostCode());
+		$this->assertEquals('2020-11-05', $states[1]->getDate()->format('Y-m-d'));
+		$this->assertEquals('10003', $states[1]->getPostCode());
 
-		$this->assertEquals('Příprava zásilky k doručení.', $states[2]->getText());
-		$this->assertEquals('2019-01-28', $states[2]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[2]->getPostCode());
+		$this->assertEquals('Zásilka v přepravě.', $states[2]->getText());
+		$this->assertEquals('2020-11-05', $states[2]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[2]->getPostCode());
 
-		$this->assertEquals('Doručování zásilky.', $states[3]->getText());
-		$this->assertEquals('2019-01-28', $states[3]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[3]->getPostCode());
+		$this->assertEquals('Zásilka vypravena z třídícího centra.', $states[3]->getText());
+		$this->assertEquals('2020-11-06', $states[3]->getDate()->format('Y-m-d'));
+		$this->assertEquals('65502', $states[3]->getPostCode());
 
-		$this->assertEquals('Dodání zásilky.', $states[4]->getText());
-		$this->assertEquals('2019-01-28', $states[4]->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $states[4]->getPostCode());
+		$this->assertEquals('Přeprava zásilky k dodací poště.', $states[4]->getText());
+		$this->assertEquals('2020-11-06', $states[4]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[4]->getPostCode());
+
+		$this->assertEquals('E-mail adresátovi - zásilka převzata do přepravy.', $states[5]->getText());
+		$this->assertEquals('2020-11-05', $states[5]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[5]->getPostCode());
+
+		$this->assertEquals('SMS zpráva adresátovi - zásilka převzata do přepravy.', $states[6]->getText());
+		$this->assertEquals('2020-11-05', $states[6]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[6]->getPostCode());
+
+		$this->assertEquals('Příprava zásilky k doručení.', $states[7]->getText());
+		$this->assertEquals('2020-11-09', $states[7]->getDate()->format('Y-m-d'));
+		$this->assertEquals('60010', $states[7]->getPostCode());
+
+		$this->assertEquals('E-mail adresátovi - termín doručení zásilky.', $states[8]->getText());
+		$this->assertEquals('2020-11-09', $states[8]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[8]->getPostCode());
+
+		$this->assertEquals('SMS zpráva adresátovi - termín doručení zásilky.', $states[9]->getText());
+		$this->assertEquals('2020-11-09', $states[9]->getDate()->format('Y-m-d'));
+		$this->assertNull($states[9]->getPostCode());
+
+		$this->assertEquals('Doručování zásilky v rámci odpoledního doručování.', $states[10]->getText());
+		$this->assertEquals('2020-11-09', $states[10]->getDate()->format('Y-m-d'));
+		$this->assertEquals('60010', $states[10]->getPostCode());
+
+		$this->assertEquals('Dodání zásilky.', $states[11]->getText());
+		$this->assertEquals('2020-11-09', $states[11]->getDate()->format('Y-m-d'));
+		$this->assertEquals('60010', $states[11]->getPostCode());
 	}
 
 	public function testParcelHistoryIsDelivered(): void
 	{
-		$this->assertTrue($this->history->isDelivered('RR2599903371F'));
+		$this->assertTrue($this->history->isDelivered('DR3304881147U'));
 	}
 
 	public function testParcelStatus(): void
 	{
-		$currentState = $this->history->status('RR2599903371F');
+		$currentState = $this->history->status('DR3304881147U');
 
 		$this->assertEquals('Dodání zásilky.', $currentState->getText());
-		$this->assertEquals('2019-01-28', $currentState->getDate()->format('Y-m-d'));
-		$this->assertEquals('76700', $currentState->getPostCode());
+		$this->assertEquals('2020-11-09', $currentState->getDate()->format('Y-m-d'));
+		$this->assertEquals('60010', $currentState->getPostCode());
 	}
 
 	private function assertConsignmentDispatch(Dispatch $confirm): void

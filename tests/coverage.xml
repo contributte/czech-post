@@ -7,5 +7,6 @@
     </filter>
     <logging>
         <log type="coverage-clover" target="./../coverage.xml"/>
+        <log type="coverage-html" target="./../coverage.html"/>
     </logging>
 </phpunit>
