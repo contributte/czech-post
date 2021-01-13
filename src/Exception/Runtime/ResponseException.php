@@ -13,6 +13,8 @@ class ResponseException extends RuntimeException
 
 	public function __construct(ResponseInterface $response, ?string $message = null)
 	{
+		$this->response = $response;
+
 		if ($message === null) {
 			$message = sprintf('Unexpected status code "%d".', $response->getStatusCode());
 		}

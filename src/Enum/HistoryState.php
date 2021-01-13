@@ -25,27 +25,30 @@ final class HistoryState
 
 	public static function isKnownState(string $state): bool
 	{
-		return $state === self::INVALID ||
-			$state === self::NOT_FOUND ||
-			$state === self::ANNOUNCED ||
-			$state === self::ANNOUNCED ||
-			$state === self::SUBMITTED ||
-			$state === self::TRANSPORTED ||
-			$state === self::ENTERING_DELIVERY_POST_OFFICE ||
-			$state === self::REDIRECTING_TO_ANOTHER_ADDRESS ||
-			$state === self::DAMAGED ||
-			$state === self::STORED ||
-			$state === self::BADLY_DIRECTED ||
-			$state === self::OUT_OF_REGISTRY ||
-			$state === self::DELIVERED_SUCCESSFULLY ||
-			$state === self::RETURNED ||
-			$state === self::DELIVERED_TO_SENDER;
+		return in_array($state, [
+			self::INVALID,
+			self::NOT_FOUND,
+			self::ANNOUNCED,
+			self::SUBMITTED,
+			self::TRANSPORTED,
+			self::ENTERING_DELIVERY_POST_OFFICE,
+			self::REDIRECTING_TO_ANOTHER_ADDRESS,
+			self::DAMAGED,
+			self::STORED,
+			self::BADLY_DIRECTED,
+			self::OUT_OF_REGISTRY,
+			self::DELIVERED_SUCCESSFULLY,
+			self::RETURNED,
+			self::DELIVERED_TO_SENDER,
+		], true);
 	}
 
 	public static function isErrorState(string $state): bool
 	{
-		return $state === self::INVALID ||
-			$state === self::NOT_FOUND;
+		return in_array($state, [
+			self::INVALID,
+			self::NOT_FOUND,
+		], true);
 	}
 
 	public static function isDeliveredSuccessfully(string $state): bool
