@@ -6,11 +6,11 @@
     <!-- Specific -->
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
-            <property name="rootNamespaces" type="array" value="
-                src=>Contributte\CzechPost,
-                tests/cases=>Tests\Cases\Contributte\CzechPost,
-                tests/toolkit=>Tests\Toolkit\Contributte\CzechPost,
-            "/>
+            <property name="rootNamespaces" type="array">
+				<element key="src" value="Contributte\CzechPost"/>
+				<element key="tests/cases" value="Tests\Cases"/>
+				<element key="tests/toolkit" value="Tests\Toolkit"/>
+			</property>
             <property name="extensions" type="array" value="php,phpt"/>
         </properties>
     </rule>
