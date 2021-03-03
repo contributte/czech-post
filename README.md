@@ -20,10 +20,10 @@
 
 ## Usage
 
-To install latest version of `contributte/czech-post` use [Composer](https://getcomposer.com).
+To install latest version of `contributte/czech-post` use [Composer](https://getcomposer.org).
 
 ```
-composer require contributte/czech-post
+$ composer require contributte/czech-post
 ```
 
 ## Documentation
