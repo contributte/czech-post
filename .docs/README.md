@@ -14,7 +14,8 @@
 
 Require package
 
-```sh
+```bash
+
 composer require contributte/czech-post
 ```
 
@@ -32,7 +33,7 @@ contributte.czechpost:
         tmp_dir: '../../some/tmp/dir/path/'
 ```
 
-Note: dreplech/dreplech are CzechPost testing credentials. 
+Note: dreplech/dreplech are CzechPost testing credentials.
 
 ## Usage
 
@@ -44,13 +45,13 @@ For better usage explanation please see `tests/Cases/UsageTest.php`
 
 In order to create the consignment you must instantiate `Consignment` entity.
 By passing this entity object to `sendConsignment` method you should get `Dispatch` entity as the response.
-Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods, 
+Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods,
 which should be used for calling `getConsignmentsOverview` and `getConsignmentLabel` methods.
 
 ### Errors
 
 In case of invalid request the `RequestException` is being thrown.
-When there is some problem with getting response or unexpected response data format, the `ResponseException` is thrown. 
+When there is some problem with getting response or unexpected response data format, the `ResponseException` is thrown.
 
 ### Rootquestor
 
