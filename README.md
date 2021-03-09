@@ -22,7 +22,7 @@
 
 To install latest version of `contributte/czech-post` use [Composer](https://getcomposer.com).
 
-```
+```bash
 composer require contributte/czech-post
 ```
 
