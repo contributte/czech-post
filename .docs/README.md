@@ -6,9 +6,9 @@
 
 - [Setup](#setup)
 - [Usage](#usage)
-  - [Rootquestor](#rootquestor)
-  - [Requestors](#requestors)
-  - [Client](#client)
+	- [Rootquestor](#rootquestor)
+	- [Requestors](#requestors)
+	- [Client](#client)
 
 ## Setup
 
@@ -20,16 +20,16 @@ composer require contributte/czech-post
 
 Configure extension
 
-```yaml
+```neon
 extensions:
-    contributte.czechpost: Contributte\CzechPost\DI\CzechPostExtension
+	contributte.czechpost: Contributte\CzechPost\DI\CzechPostExtension
 
 contributte.czechpost:
-    http:
-        base_uri: https://online3.postservis.cz/dopisonline/
-        auth: [dreplech, dreplech]
-    config:
-        tmp_dir: '../../some/tmp/dir/path/'
+	http:
+		base_uri: https://online3.postservis.cz/dopisonline/
+		auth: [dreplech, dreplech]
+	config:
+		tmp_dir: '../../some/tmp/dir/path/'
 ```
 
 Note: dreplech/dreplech are CzechPost testing credentials.
@@ -62,8 +62,8 @@ public $cpost;
 
 public function magic(): void
 {
-     $this->cpost->consignment->sendConsignment($consignment);
-     $this->cpost->history->status('RRXXYYZZ');
+	$this->cpost->consignment->sendConsignment($consignment);
+	$this->cpost->history->status('RRXXYYZZ');
 }
 ```
 
@@ -84,7 +84,7 @@ public $parcelHistoryRequestor;
 **ConsignmentRequestor**
 
 | Method                                     | API path              | Type |
-| -------------------------------------------| ----------------------|----- |
+|--------------------------------------------|-----------------------|----- |
 | send(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
 | detail(string $id): Dispatch               | .../donPrehledZak.php | POST |
 | findByDate(DateTime $date): Dispatch[]     | .../donPrehledZak.php | POST |
@@ -120,6 +120,6 @@ public $cpostClient;
 
 public function magic(): void
 {
-    $client = $this->cpostClient->get('unprefixed/url/to/resource');
+	$client = $this->cpostClient->get('unprefixed/url/to/resource');
 }
 ```
