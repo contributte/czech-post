@@ -6,33 +6,33 @@
 
 - [Setup](#setup)
 - [Usage](#usage)
-  - [Rootquestor](#rootquestor)
-  - [Requestors](#requestors)
-  - [Client](#client)
+	- [Rootquestor](#rootquestor)
+	- [Requestors](#requestors)
+	- [Client](#client)
 
 ## Setup
 
 Require package
 
-```sh
+```bash
 composer require contributte/czech-post
 ```
 
 Configure extension
 
-```yaml
+```neon
 extensions:
-    contributte.czechpost: Contributte\CzechPost\DI\CzechPostExtension
+	contributte.czechpost: Contributte\CzechPost\DI\CzechPostExtension
 
 contributte.czechpost:
-    http:
-        base_uri: https://online3.postservis.cz/dopisonline/
-        auth: [dreplech, dreplech]
-    config:
-        tmp_dir: '../../some/tmp/dir/path/'
+	http:
+		base_uri: https://online3.postservis.cz/dopisonline/
+		auth: [dreplech, dreplech]
+	config:
+		tmp_dir: '../../some/tmp/dir/path/'
 ```
 
-Note: dreplech/dreplech are CzechPost testing credentials. 
+Note: dreplech/dreplech are CzechPost testing credentials.
 
 ## Usage
 
@@ -44,13 +44,13 @@ For better usage explanation please see `tests/Cases/UsageTest.php`
 
 In order to create the consignment you must instantiate `Consignment` entity.
 By passing this entity object to `sendConsignment` method you should get `Dispatch` entity as the response.
-Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods, 
+Among others `Dispatch` has `getId()` and `getTrackingNumber()` methods,
 which should be used for calling `getConsignmentsOverview` and `getConsignmentLabel` methods.
 
 ### Errors
 
 In case of invalid request the `RequestException` is being thrown.
-When there is some problem with getting response or unexpected response data format, the `ResponseException` is thrown. 
+When there is some problem with getting response or unexpected response data format, the `ResponseException` is thrown.
 
 ### Rootquestor
 
@@ -62,8 +62,8 @@ public $cpost;
 
 public function magic(): void
 {
-     $this->cpost->consignment->sendConsignment($consignment);
-     $this->cpost->history->status('RRXXYYZZ');
+	$this->cpost->consignment->sendConsignment($consignment);
+	$this->cpost->history->status('RRXXYYZZ');
 }
 ```
 
@@ -84,7 +84,7 @@ public $parcelHistoryRequestor;
 **ConsignmentRequestor**
 
 | Method                                     | API path              | Type |
-| -------------------------------------------| ----------------------|----- |
+|--------------------------------------------|-----------------------|----- |
 | send(Consignment $consignment): Dispatch   | .../donApi.php        | POST |
 | detail(string $id): Dispatch               | .../donPrehledZak.php | POST |
 | findByDate(DateTime $date): Dispatch[]     | .../donPrehledZak.php | POST |
@@ -120,6 +120,6 @@ public $cpostClient;
 
 public function magic(): void
 {
-    $client = $this->cpostClient->get('unprefixed/url/to/resource');
+	$client = $this->cpostClient->get('unprefixed/url/to/resource');
 }
 ```
