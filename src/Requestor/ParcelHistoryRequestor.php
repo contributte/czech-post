@@ -74,6 +74,7 @@ final class ParcelHistoryRequestor extends AbstractRequestor
 		}
 
 		try {
+			/** @var mixed[] $data */
 			$data = Json::decode($response->getBody()->getContents());
 		} catch (JsonException $e) {
 			throw new ResponseException($response, 'Cannot decode response json');

@@ -48,7 +48,7 @@ final class Helpers
 			throw new XmlException('Could not encode to json.');
 		}
 
-		return json_decode($encoded, true);
+		return (array) json_decode($encoded, true);
 	}
 
 }
