@@ -1,15 +1,18 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Cases\Contributte\CzechPost\XmlRequest;
+namespace Tests\Cases\XmlRequest;
 
 use Contributte\CzechPost\Entity\Cheque;
 use Contributte\CzechPost\Entity\Consignment;
 use Contributte\CzechPost\Entity\File;
 use Contributte\CzechPost\Entity\Person;
 use Contributte\CzechPost\XmlRequest\ConsignmentRequestFactory;
-use PHPUnit\Framework\TestCase;
+use Ninjify\Nunjuck\TestCase\BaseTestCase;
+use Tester\Assert;
 
-final class ConsignmentRequestFactoryTest extends TestCase
+require_once __DIR__ . '/../../bootstrap.php';
+
+final class ConsignmentRequestFactoryTest extends BaseTestCase
 {
 
 	/** @var ConsignmentRequestFactory */
@@ -94,7 +97,9 @@ final class ConsignmentRequestFactoryTest extends TestCase
 	private function assertFileContent(string $file, string $generated): void
 	{
 		$expected = file_get_contents($file);
-		$this->assertEquals($expected, $generated);
+		Assert::equal($expected, $generated);
 	}
 
 }
+
+(new ConsignmentRequestFactoryTest())->run();

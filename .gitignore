@@ -1,10 +1,6 @@
 # IDE
 /.idea
 
-# Temp files
-/tmp/*
-!/tmp/.gitkeep
-
 # Composer
 /vendor
 /composer.lock

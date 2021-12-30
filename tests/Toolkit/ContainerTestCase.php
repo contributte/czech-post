@@ -1,17 +1,15 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Toolkit\Contributte\CzechPost;
+namespace Tests\Toolkit;
 
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
 use Nette\DI\Extensions\ExtensionsExtension;
-use PHPUnit\Framework\TestCase;
+use Ninjify\Nunjuck\TestCase\BaseTestCase;
 
-abstract class ContainerTestCase extends TestCase
+abstract class ContainerTestCase extends BaseTestCase
 {
-
-	protected const TEMP_DIR = __DIR__ . '/../tmp';
 
 	/** @var Container */
 	protected $container;
@@ -41,14 +39,8 @@ abstract class ContainerTestCase extends TestCase
 
 	protected function createContainer(): Container
 	{
-		// Check composer && tester
-		if (@!include __DIR__ . '/../../vendor/autoload.php') {
-			echo 'Install PhpUnit using `composer update --dev`';
-			exit(1);
-		}
-
 		// Create container
-		$loader = new ContainerLoader(self::TEMP_DIR);
+		$loader = new ContainerLoader(TEMP_DIR);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('extensions', new ExtensionsExtension());
 

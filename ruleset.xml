@@ -8,8 +8,7 @@
         <properties>
             <property name="rootNamespaces" type="array" value="
                 src=>Contributte\CzechPost,
-                tests/cases=>Tests\Cases\Contributte\CzechPost,
-                tests/toolkit=>Tests\Toolkit\Contributte\CzechPost,
+                tests=>Tests
             "/>
             <property name="extensions" type="array" value="php,phpt"/>
         </properties>
