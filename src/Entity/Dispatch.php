@@ -192,7 +192,7 @@ final class Dispatch
 			throw new InvalidStateException('Missing dispatch\'s  "id" or "kod_objednavky" key.');
 		}
 
-		return new self($id, (string) $data['podacicislo']);
+		return new self($id, (is_array($data['podacicislo']) && count($data['podacicislo']) == 0) ? '' : (string) $data['podacicislo']);
 	}
 
 }
