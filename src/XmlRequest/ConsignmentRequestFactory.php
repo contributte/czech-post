@@ -45,6 +45,7 @@ final class ConsignmentRequestFactory
 		$root->appendChild($this->el('tiskpoukazky', $this->consignment->isPrintCheque() ? '1' : '0'));
 		$root->appendChild($this->el('typods', $this->consignment->getPrintSenderType()));
 		$root->appendChild($this->el('typadr', $this->consignment->getPrintRecipientType()));
+		$root->appendChild($this->el('sluzby', $this->consignment->getServices()));
 	}
 
 	private function addSender(DOMNode $root): void

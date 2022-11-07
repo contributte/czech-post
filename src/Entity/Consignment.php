@@ -32,6 +32,9 @@ final class Consignment
 	/** @var int */
 	private $printRecipientType = PrintType::RECIPIENT_USE_DETAILS;
 
+	/** @var string */
+	private $services = '';
+
 	/** @var File[] */
 	private $files = [];
 
@@ -157,6 +160,14 @@ final class Consignment
 	public function setPrintRecipientType(int $printRecipientType): void
 	{
 		$this->printRecipientType = $printRecipientType;
+	}
+
+	public function getServices(): string {
+		return $this->services;
+	}
+
+	public function setServices(string $services): void {
+		$this->services = $services;
 	}
 
 }
