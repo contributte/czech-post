@@ -10,10 +10,9 @@ abstract class AbstractCpostHttpClient
 	protected const REQUEST_TIMEOUT = 5;
 
 	/** @var mixed[][] */
-	protected $config = [];
+	protected array $config = [];
 
-	/** @var HttpClient */
-	protected $httpClient;
+	protected HttpClient $httpClient;
 
 	/**
 	 * @param mixed[][] $config

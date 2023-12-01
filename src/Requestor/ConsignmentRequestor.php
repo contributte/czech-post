@@ -15,8 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 class ConsignmentRequestor extends AbstractRequestor
 {
 
-	/** @var ConsignmentClient */
-	protected $client;
+	protected ConsignmentClient $client;
 
 	public function __construct(ConsignmentClient $client)
 	{
@@ -71,6 +70,7 @@ class ConsignmentRequestor extends AbstractRequestor
 	public function printLabel(string $trackingNumber): string
 	{
 		$response = $this->client->printLabel($trackingNumber);
+
 		parent::assertResponse($response, [200]);
 
 		return $response->getBody()->getContents();

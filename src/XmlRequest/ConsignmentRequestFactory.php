@@ -12,11 +12,9 @@ use DOMNode;
 final class ConsignmentRequestFactory
 {
 
-	/** @var Consignment */
-	private $consignment;
+	private Consignment $consignment;
 
-	/** @var DOMDocument */
-	private $dom;
+	private DOMDocument $dom;
 
 	public function create(Consignment $consignment): DOMDocument
 	{
@@ -145,10 +143,7 @@ final class ConsignmentRequestFactory
 		return $f;
 	}
 
-	/**
-	 * @param string|int|float $value
-	 */
-	private function el(string $name, $value): DOMElement
+	private function el(string $name, string|int|float $value): DOMElement
 	{
 		return $this->dom->createElement($name, addslashes((string) $value));
 	}

@@ -5,14 +5,11 @@ namespace Contributte\CzechPost\Entity;
 final class File
 {
 
-	/** @var string */
-	private $fileName;
+	private string $fileName;
 
-	/** @var string */
-	private $content;
+	private string $content;
 
-	/** @var int */
-	private $printType = 0;
+	private int $printType = 0;
 
 	/**
 	 * Content is base64 content of a pdf file

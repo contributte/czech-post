@@ -7,23 +7,17 @@ use DateTimeImmutable;
 final class State
 {
 
-	/** @var string */
-	private $id;
+	private string $id;
 
-	/** @var DateTimeImmutable */
-	private $date;
+	private DateTimeImmutable $date;
 
-	/** @var string */
-	private $text;
+	private string $text;
 
-	/** @var string|null */
-	private $postCode;
+	private ?string $postCode = null;
 
-	/** @var string|null */
-	private $postOffice;
+	private ?string $postOffice = null;
 
-	/** @var DateTimeImmutable|null */
-	private $deliveryAttempt;
+	private ?DateTimeImmutable $deliveryAttempt = null;
 
 	/**
 	 * @param mixed[] $data

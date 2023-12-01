@@ -12,46 +12,33 @@ final class Dispatch
 {
 
 	/** @var mixed[] */
-	private $rawData = [];
+	private array $rawData = [];
 
-	/** @var string */
-	private $id;
+	private string $id;
 
-	/** @var string */
-	private $trackingNumber = '';
+	private string $trackingNumber = '';
 
-	/** @var int */
-	private $paymentType = 0;
+	private int $paymentType = 0;
 
-	/** @var int */
-	private $printType = PrintType::ONE_SIDED;
+	private int $printType = PrintType::ONE_SIDED;
 
-	/** @var int */
-	private $envelope = Envelope::STANDARD;
+	private int $envelope = Envelope::STANDARD;
 
-	/** @var DateTimeImmutable|null */
-	private $date;
+	private ?DateTimeImmutable $date = null;
 
-	/** @var string */
-	private $price = '';
+	private string $price = '';
 
-	/** @var int */
-	private $sheetsCount = 0;
+	private int $sheetsCount = 0;
 
-	/** @var int */
-	private $pagesCount = 0;
+	private int $pagesCount = 0;
 
-	/** @var bool */
-	private $printCheque = false;
+	private bool $printCheque = false;
 
-	/** @var int */
-	private $payment = 0;
+	private int $payment = 0;
 
-	/** @var int */
-	private $status = Status::PENDING;
+	private int $status = Status::PENDING;
 
-	/** @var string */
-	private $postOffice = '';
+	private string $postOffice = '';
 
 	public function __construct(string $id, string $trackingNumber)
 	{
@@ -192,7 +179,7 @@ final class Dispatch
 			throw new InvalidStateException('Missing dispatch\'s  "id" or "kod_objednavky" key.');
 		}
 
-		return new self($id, (is_array($data['podacicislo']) && count($data['podacicislo']) == 0) ? '' : (string) $data['podacicislo']);
+		return new self($id, (is_array($data['podacicislo']) && count($data['podacicislo']) === 0) ? '' : (string) $data['podacicislo']);
 	}
 
 }

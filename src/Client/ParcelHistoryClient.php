@@ -10,8 +10,7 @@ final class ParcelHistoryClient
 
 	private const HISTORY_URL = 'https://b2c.cpost.cz/services/ParcelHistory/getDataAsJson?idParcel=%s';
 
-	/** @var HttpClient */
-	private $httpClient;
+	private HttpClient $httpClient;
 
 	public function __construct(HttpClient $httpClient)
 	{

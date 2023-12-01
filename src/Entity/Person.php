@@ -8,35 +8,25 @@ final class Person
 	public const TYPE_SENDER = 'sender';
 	public const TYPE_RECIPIENT = 'recipient';
 
-	/** @var string */
-	private $type;
+	private string $type;
 
-	/** @var string */
-	private $salutation = '';
+	private string $salutation = '';
 
-	/** @var string */
-	private $company = '';
+	private string $company = '';
 
-	/** @var string */
-	private $fullName = '';
+	private string $fullName = '';
 
-	/** @var string */
-	private $street = '';
+	private string $street = '';
 
-	/** @var string */
-	private $streetNumber = '';
+	private string $streetNumber = '';
 
-	/** @var string */
-	private $orientationNumber = '';
+	private string $orientationNumber = '';
 
-	/** @var string */
-	private $municipality = '';
+	private string $municipality = '';
 
-	/** @var string */
-	private $postcode = '';
+	private string $postcode = '';
 
-	/** @var string */
-	private $country = '';
+	private string $country = '';
 
 	public function __construct(string $type)
 	{

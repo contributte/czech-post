@@ -14,14 +14,13 @@ use Psr\Http\Message\ResponseInterface;
 class ConsignmentClient extends AbstractCpostHttpClient
 {
 
-	private const PATH_SEND   = 'donApi.php';
+	private const PATH_SEND = 'donApi.php';
 	private const PATH_DETAIL = 'donPrehledZak.php';
-	private const PATH_LABEL  = 'podlist.php';
-	private const PATH_ENUMS  = 'vratCiselnik.php';
+	private const PATH_LABEL = 'podlist.php';
+	private const PATH_ENUMS = 'vratCiselnik.php';
 	private const PATH_CANCEL = 'donStorno.php';
 
-	/** @var ConsignmentRequestFactory */
-	private $requestFactory;
+	private ConsignmentRequestFactory $requestFactory;
 
 	/**
 	 * @param mixed[] $config

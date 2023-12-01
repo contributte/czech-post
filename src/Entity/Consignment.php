@@ -8,38 +8,28 @@ use Contributte\CzechPost\Enum\PrintType;
 final class Consignment
 {
 
-	/** @var Person */
-	private $sender;
+	private Person $sender;
 
-	/** @var Person */
-	private $recipient;
+	private Person $recipient;
 
-	/** @var int */
-	private $paymentType = 0;
+	private int $paymentType = 0;
 
-	/** @var int */
-	private $printType = PrintType::ONE_SIDED;
+	private int $printType = PrintType::ONE_SIDED;
 
-	/** @var int */
-	private $envelope = Envelope::STANDARD;
+	private int $envelope = Envelope::STANDARD;
 
-	/** @var bool */
-	private $printCheque = false;
+	private bool $printCheque = false;
 
-	/** @var int */
-	private $printSenderType = PrintType::SENDER_USE_DETAILS;
+	private int $printSenderType = PrintType::SENDER_USE_DETAILS;
 
-	/** @var int */
-	private $printRecipientType = PrintType::RECIPIENT_USE_DETAILS;
+	private int $printRecipientType = PrintType::RECIPIENT_USE_DETAILS;
 
-	/** @var string */
-	private $services = '';
+	private string $services = '';
 
 	/** @var File[] */
-	private $files = [];
+	private array $files = [];
 
-	/** @var Cheque|null */
-	private $cheque;
+	private ?Cheque $cheque = null;
 
 	/**
 	 * @param File[] $files
@@ -162,11 +152,13 @@ final class Consignment
 		$this->printRecipientType = $printRecipientType;
 	}
 
-	public function getServices(): string {
+	public function getServices(): string
+	{
 		return $this->services;
 	}
 
-	public function setServices(string $services): void {
+	public function setServices(string $services): void
+	{
 		$this->services = $services;
 	}
 

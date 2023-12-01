@@ -8,19 +8,16 @@ use Contributte\CzechPost\Exception\Logical\InvalidStateException;
 final class CancelableDispatch
 {
 
-	/** @var string */
-	private $id;
+	private string $id;
 
-	/** @var int */
-	private $status = Status::PENDING;
+	private int $status = Status::PENDING;
 
-	/** @var string */
-	private $description = '';
+	private string $description = '';
 
 	public function __construct(string $id, int $status, string $description)
 	{
-		$this->id          = $id;
-		$this->status      = $status;
+		$this->id = $id;
+		$this->status = $status;
 		$this->description = $description;
 	}
 

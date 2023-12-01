@@ -13,7 +13,7 @@ class CpostRootquestor
 {
 
 	/** @var AbstractRequestor[] */
-	private $requestors = [];
+	private array $requestors = [];
 
 	public function add(string $name, AbstractRequestor $requestor): void
 	{

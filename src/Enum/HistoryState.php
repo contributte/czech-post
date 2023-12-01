@@ -6,22 +6,22 @@ final class HistoryState
 {
 
 	// errors
-	public const INVALID   = '-4'; // Pro tento druh zásilek Česká pošta informace nezobrazuje.
+	public const INVALID = '-4'; // Pro tento druh zásilek Česká pošta informace nezobrazuje.
 	public const NOT_FOUND = '-3'; // Zásilka tohoto podacího čísla není v evidenci.
 
 	// common states
-	public const ANNOUNCED                      = '-M'; // Obdrženy údaje k zásilce.
-	public const SUBMITTED                      = '21'; // Podaná zásilka
-	public const TRANSPORTED                    = '75'; // Přepravovaná zásilka (Pouze zásilky I.TU (DE))
-	public const ENTERING_DELIVERY_POST_OFFICE  = '51'; // Vstup na dodací poštu
+	public const ANNOUNCED = '-M'; // Obdrženy údaje k zásilce.
+	public const SUBMITTED = '21'; // Podaná zásilka
+	public const TRANSPORTED = '75'; // Přepravovaná zásilka (Pouze zásilky I.TU (DE))
+	public const ENTERING_DELIVERY_POST_OFFICE = '51'; // Vstup na dodací poštu
 	public const REDIRECTING_TO_ANOTHER_ADDRESS = '8D'; // Dosílka na jinou adresu
-	public const DAMAGED                        = '8E'; // Poškozená
-	public const STORED                         = '82'; // Uložená
-	public const BADLY_DIRECTED                 = '8T'; // Chybně směrovaná
-	public const OUT_OF_REGISTRY                = '88'; // Vyšlá z evidence
-	public const DELIVERED_SUCCESSFULLY         = '91'; // Doručená
-	public const RETURNED                       = '95'; // Vrácená
-	public const DELIVERED_TO_SENDER            = '9V'; // Doručená odesílateli
+	public const DAMAGED = '8E'; // Poškozená
+	public const STORED = '82'; // Uložená
+	public const BADLY_DIRECTED = '8T'; // Chybně směrovaná
+	public const OUT_OF_REGISTRY = '88'; // Vyšlá z evidence
+	public const DELIVERED_SUCCESSFULLY = '91'; // Doručená
+	public const RETURNED = '95'; // Vrácená
+	public const DELIVERED_TO_SENDER = '9V'; // Doručená odesílateli
 
 	public static function isKnownState(string $state): bool
 	{

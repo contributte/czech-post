@@ -10,8 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 class GuzzleClient implements HttpClient
 {
 
-	/** @var GuzzleClientInterface */
-	private $guzzle;
+	private GuzzleClientInterface $guzzle;
 
 	public function __construct(GuzzleClientInterface $guzzle)
 	{

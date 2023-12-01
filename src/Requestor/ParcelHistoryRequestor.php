@@ -14,8 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 final class ParcelHistoryRequestor extends AbstractRequestor
 {
 
-	/** @var ParcelHistoryClient */
-	protected $client;
+	protected ParcelHistoryClient $client;
 
 	public function __construct(ParcelHistoryClient $client)
 	{

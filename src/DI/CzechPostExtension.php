@@ -19,7 +19,7 @@ class CzechPostExtension extends CompilerExtension
 {
 
 	/** @var mixed[] */
-	protected $defaults = [
+	protected array $defaults = [
 		'http' => [
 			'base_uri' => 'https://online.postservis.cz/',
 			'auth' => ['', ''],

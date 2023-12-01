@@ -7,43 +7,34 @@ use InvalidArgumentException;
 final class Cheque
 {
 
-	private const MAX_ADDRESS_LINES_COUNT = 5; // defined by CPost
+	// defined by CPost
+	private const MAX_ADDRESS_LINES_COUNT = 5;
 
-	/** @var string */
-	private $price = '0';
+	private string $price = '0';
 
-	/** @var string */
-	private $bankAccountPrefix = '';
+	private string $bankAccountPrefix = '';
 
-	/** @var string */
-	private $bankAccountNumber = '';
+	private string $bankAccountNumber = '';
 
-	/** @var string */
-	private $bankCode = '';
+	private string $bankCode = '';
 
-	/** @var string */
-	private $variableSymbol = '';
+	private string $variableSymbol = '';
 
-	/** @var string */
-	private $specificSymbol = '';
+	private string $specificSymbol = '';
 
-	/** @var string */
-	private $constantSymbol = '';
+	private string $constantSymbol = '';
 
-	/** @var string */
-	private $commentLineOne = '';
+	private string $commentLineOne = '';
 
-	/** @var string */
-	private $commentLineTwo = '';
+	private string $commentLineTwo = '';
 
-	/** @var string */
-	private $purpose = '';
+	private string $purpose = '';
 
 	/** @var string[] */
-	private $senderAddressLines = [];
+	private array $senderAddressLines = [];
 
 	/** @var string[] */
-	private $recipientAddressLines = [];
+	private array $recipientAddressLines = [];
 
 	public function getPrice(): string
 	{
