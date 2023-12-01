@@ -7,21 +7,15 @@ use Contributte\CzechPost\Entity\Consignment;
 use Contributte\CzechPost\Entity\File;
 use Contributte\CzechPost\Entity\Person;
 use Contributte\CzechPost\XmlRequest\ConsignmentRequestFactory;
-use Ninjify\Nunjuck\TestCase\BaseTestCase;
 use Tester\Assert;
+use Tester\TestCase;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-final class ConsignmentRequestFactoryTest extends BaseTestCase
+final class ConsignmentRequestFactoryTest extends TestCase
 {
 
-	/** @var ConsignmentRequestFactory */
-	private $factory;
-
-	public function setUp(): void
-	{
-		$this->factory = new ConsignmentRequestFactory();
-	}
+	private ConsignmentRequestFactory $factory;
 
 	public static function createConsignmentWithoutCheque(): Consignment
 	{
@@ -76,6 +70,11 @@ final class ConsignmentRequestFactoryTest extends BaseTestCase
 		$cons->setCheque($cheque);
 
 		return $cons;
+	}
+
+	public function setUp(): void
+	{
+		$this->factory = new ConsignmentRequestFactory();
 	}
 
 	public function testCreateWithoutCheque(): void

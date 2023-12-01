@@ -10,46 +10,21 @@ use Contributte\CzechPost\Exception\Runtime\ResponseException;
 use Contributte\CzechPost\Http\GuzzleClient;
 use Contributte\CzechPost\Requestor\ConsignmentRequestor;
 use Contributte\CzechPost\Requestor\ParcelHistoryRequestor;
+use Contributte\Tester\Environment;
 use DateTimeImmutable;
 use GuzzleHttp\Client;
-use Ninjify\Nunjuck\TestCase\BaseTestCase;
 use Tester\Assert;
-use Tester\Environment;
+use Tester\TestCase;
 use Tests\Cases\XmlRequest\ConsignmentRequestFactoryTest;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-final class UsageTest extends BaseTestCase
+final class UsageTest extends TestCase
 {
 
-	/** @var ConsignmentRequestor */
-	private $cpost;
+	private ConsignmentRequestor $cpost;
 
-	/** @var ParcelHistoryRequestor */
-	private $history;
-
-	protected function setUp(): void
-	{
-		Environment::skip('This is integration test against Ceska Posta testing environment.');
-
-		$config = [
-			'http' => [
-				'base_uri' => 'https://online3.postservis.cz/dopisonline/',
-				'auth' => ['dreplech', 'dreplech'],
-			],
-			'config' => [
-				'tmp_dir' => TEMP_DIR,
-			],
-		];
-
-		$guzzle = new GuzzleClient(new Client($config['http']));
-
-		$cpostClient = new ConsignmentClient($guzzle, $config);
-		$this->cpost = new ConsignmentRequestor($cpostClient);
-
-		$historyClient = new ParcelHistoryClient($guzzle);
-		$this->history = new ParcelHistoryRequestor($historyClient);
-	}
+	private ParcelHistoryRequestor $history;
 
 	public function testSend(): Dispatch
 	{
@@ -87,7 +62,7 @@ final class UsageTest extends BaseTestCase
 	{
 		$labelData = $this->cpost->printLabel($dispatch->getTrackingNumber());
 
-		$fileName = sprintf('%s/%s.pdf', TEMP_DIR, $dispatch->getTrackingNumber());
+		$fileName = sprintf('%s/%s.pdf', Environment::getTestDir(), $dispatch->getTrackingNumber());
 		file_put_contents($fileName, $labelData);
 
 		Assert::true(filesize($fileName) > 100000);
@@ -95,7 +70,7 @@ final class UsageTest extends BaseTestCase
 
 	public function testGetConsignmentsOverviewInvalidId(): void
 	{
-		Assert::exception(function () {
+		Assert::exception(function (): void {
 			$this->cpost->detail('some-invalid-id');
 		}, ResponseException::class, 'Error: Zakázka č. some-invalid-id neexistuje., Code: -9');
 	}
@@ -113,7 +88,7 @@ final class UsageTest extends BaseTestCase
 
 	public function testGetConsignmentByDateNoRecords(): void
 	{
-		Assert::exception(function () {
+		Assert::exception(function (): void {
 			$longTimeAgo = (new DateTimeImmutable())->setDate(1975, 12, 24);
 			$this->cpost->findByDate($longTimeAgo);
 		}, ResponseException::class, 'Error: K datu 19751224 neexistuje žádný záznam., Code: -10');
@@ -165,14 +140,14 @@ final class UsageTest extends BaseTestCase
 
 	public function testParcelHistoryInvalidTrackingNumber(): void
 	{
-		Assert::exception(function () {
+		Assert::exception(function (): void {
 			$this->history->history('invalid');
 		}, ResponseException::class, 'Parcel tracking error. State: -4, Description: "Pro tento druh zásilek Česká pošta informace nezobrazuje."');
 	}
 
 	public function testParcelHistoryParcelNotFound(): void
 	{
-		Assert::exception(function () {
+		Assert::exception(function (): void {
 			$this->history->history('RR2599903552');
 		}, ResponseException::class, 'Parcel tracking error. State: -3, Description: "Zásilka tohoto podacího čísla není v evidenci."');
 	}
@@ -244,6 +219,29 @@ final class UsageTest extends BaseTestCase
 		Assert::equal('Dodání zásilky.', $currentState->getText());
 		Assert::equal('2020-11-09', $currentState->getDate()->format('Y-m-d'));
 		Assert::equal('60010', $currentState->getPostCode());
+	}
+
+	protected function setUp(): void
+	{
+		Environment::skip('This is integration test against Ceska Posta testing environment.');
+
+		$config = [
+			'http' => [
+				'base_uri' => 'https://online3.postservis.cz/dopisonline/',
+				'auth' => ['dreplech', 'dreplech'],
+			],
+			'config' => [
+				'tmp_dir' => Environment::getTestDir(),
+			],
+		];
+
+		$guzzle = new GuzzleClient(new Client($config['http']));
+
+		$cpostClient = new ConsignmentClient($guzzle, $config);
+		$this->cpost = new ConsignmentRequestor($cpostClient);
+
+		$historyClient = new ParcelHistoryClient($guzzle);
+		$this->history = new ParcelHistoryRequestor($historyClient);
 	}
 
 	private function assertConsignmentDispatch(Dispatch $confirm): void
