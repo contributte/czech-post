@@ -2,7 +2,7 @@
 
 <p align=center>
     <a href="https://github.com/contributte/czech-post/actions"><img src="https://badgen.net/github/checks/contributte/czech-post"></a>
-    <a href="https://coveralls.io/r/contributte/czech-post"><img src="https://badgen.net/coveralls/c/github/contributte/czech-post"></a>
+    <a href="https://codecov.io/gh/contributte/czech-post"><img src="https://badgen.net/codecov/c/github/contributte/czech-post"></a>
     <a href="https://packagist.org/packages/contributte/czech-post"><img src="https://badgen.net/packagist/dm/contributte/czech-post"></a>
     <a href="https://packagist.org/packages/contributte/czech-post"><img src="https://badgen.net/packagist/v/contributte/czech-post"></a>
 </p>
