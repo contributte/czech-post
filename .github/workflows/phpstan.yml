@@ -2,6 +2,7 @@ name: "Phpstan"
 
 on:
   pull_request:
+  workflow_dispatch:
 
   push:
     branches: ["*"]
@@ -10,6 +11,8 @@ on:
     - cron: "0 8 * * 1"
 
 jobs:
-  build:
+  phpstan:
     name: "Phpstan"
     uses: contributte/.github/.github/workflows/phpstan.yml@master
+    with:
+      php: "8.2"
