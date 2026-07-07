@@ -67,7 +67,7 @@ In case of an invalid request, the `RequestException` is thrown. When there is a
 
 ### Rootquestor
 
-This is a high-level way to manage the API.
+`CpostRootquestor` is the package's public high-level facade for managing the API. The historical `rootquestor` service name is kept for compatibility.
 
 ```php
 /** @var CpostRootquestor @inject */
@@ -80,7 +80,7 @@ public function magic(): void
 }
 ```
 
-You can directly pick one of the **rootquestor** and access its **requestors**.
+You can access individual requestors through the rootquestor facade.
 
 ### Requestors
 
